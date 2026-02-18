@@ -8,6 +8,7 @@ from datetime import date
 from rest_framework.pagination import LimitOffsetPagination
 from .serializers import CommandeCreateSerializer, VoirCommandeSerializer, CommandeUpdateSerializer
 from utilisateurs.models import Utilisateur
+import uuid
 
 
 # Create your views here.
@@ -256,3 +257,23 @@ def annuler_commande(request,commande_id):
                 "errors":"Erreur interne du serveur",
                 "message":str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+    
+
+# Voir les commandes du client connectés
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def liste_commande_client(request,email_client):
+    try:
+        commande = Commande.objects.filter(client__email_client=email_client).order_by("date_commande")
+    except Commande.DoesNotExist:  
+        return Response({'success': False, 'message': 'Commande non trouvée'}, status=status.HTTP_404_NOT_FOUND)
+    
+    try:
+        serializer = VoirCommandeSerializer(commande, many=True)
+        return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e :
+        return Response({
+            "success":False,
+            "errors":"Erreur interne du serveur",
+            "message":str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

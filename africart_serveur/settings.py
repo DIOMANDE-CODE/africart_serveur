@@ -155,7 +155,7 @@ AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
 # Configuration REST_FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'utilisateurs.auth.CookieTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -165,35 +165,39 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/min',
+        'anon': '100/min',
         'user': '100/min'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+
 
 # Configuration CORS
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="", cast=Csv())
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
-
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS",cast=Csv())
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 CORS_ALLOW_CREDENTIALS = True
 
-# Sessions
-SESSION_COOKIE_SECURE = False  # True en production HTTPS
-SESSION_COOKIE_HTTPONLY = True # empêche accès via JS côté client
-SESSION_COOKIE_SAMESITE = 'Lax' # ou 'None' pour cross-site (avec HTTPS)
-CSRF_COOKIE_SECURE = False      # True en prod HTTPS
-CSRF_COOKIE_HTTPONLY = False    # doit être False pour les SPA
-CSRF_COOKIE_SAMESITE = 'Lax'    # ou 'None' si cross-site
-SESSION_COOKIE_AGE = 1209600
-SESSION_SAVE_EVERY_REQUEST = True  # Prolonge la session à chaque requête
-SESSION_COOKIE_HTTPONLY = True
-CORS_ALLOW_CREDENTIALS = True
+# Configuration des Cookies
+
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = "Lax"
+
+
+
 
 # Configuration de la documentation avec drf-spectacular
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Mon serveur de MarchePro',
+    'TITLE': 'Mon serveur de Africart',
     'VERSION': '1.0.0',
     'DESCRIPTION': 'Documentation officielle du serveur.',
 }
@@ -211,3 +215,9 @@ CLOUDINARY_STORAGE = {
     'API_KEY': config("CLOUDINARY_API_KEY", default=""), 
     'API_SECRET': config("CLOUDINARY_API_SECRET", default=""), 
     }
+
+# Configuration de l'authentification pour permettre la connexion par email ou numéro de téléphone
+AUTHENTICATION_BACKENDS = [
+    "utilisateurs.backend.CustomAuthenticationBackend",  # notre backend custom
+    "django.contrib.auth.backends.ModelBackend",      # fallback
+]

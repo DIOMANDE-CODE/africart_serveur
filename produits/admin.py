@@ -12,7 +12,7 @@ class CategorieAdmin(admin.ModelAdmin):
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-    list_display=('id','identifiant_produit','nom_produit','image_produit','thumbnail','description_produit','prix_unitaire_produit','quantite_produit_disponible','seuil_alerte_produit','categorie_produit','date_creation','date_modification',)
+    list_display=('id','identifiant_produit','nom_produit','image_produit','thumbnail','image_produit_2','thumbnail_2','image_produit_3','thumbnail_3','description_produit','caracteristiques_produit','prix_unitaire_produit','quantite_produit_disponible','seuil_alerte_produit','categorie_produit','date_creation','date_modification',)
     search_fields=('nom_produit',)
     ordering = ['nom_produit']
 

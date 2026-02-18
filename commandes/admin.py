@@ -10,6 +10,7 @@ class CommandeAdmin(admin.ModelAdmin):
         'client',
         'utilisateur',
         'code_livraison',
+        'lieu_livraison',
         'date_commande',
         'etat_commande',
         'is_active',

@@ -18,10 +18,11 @@ verification_numero = RegexValidator(
 # Creation du modèle client
 class Client(models.Model):
     identifiant_client = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, related_name='client_utilisateur', null=True, blank=True)
+    email_client = models.EmailField(max_length=50, unique=True, verbose_name="Email client", blank=True, null=True)
     nom_client = models.CharField(max_length=150, blank=True, null=True, verbose_name="Nom client")
     numero_telephone_client = models.CharField(max_length=15, validators=[verification_numero],null=True, blank=True, verbose_name="Numero de téléphone")
     role = models.CharField(max_length=10, default="client", verbose_name="role client", editable=False, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now = True)

@@ -8,11 +8,9 @@ env/
 .env
 
 # Fichiers Django
-db.sqlite3
 *.log
 *.pot
 *.py[cod]
-*.sqlite3
 
 # JetBrains / VS Code
 .idea/

@@ -16,6 +16,8 @@ import os
 from rest_framework.pagination import LimitOffsetPagination
 from django.db.models import Q
 from django.core.cache import cache
+from decimal import Decimal
+
 # Create your views here.
      
 # """ Fonctiionnalités du modèle Categorie """"
@@ -23,10 +25,11 @@ from django.core.cache import cache
 # Lister les categories
 @api_view(['GET'])
 # @permission_classes([EstAdministrateur])
-@permission_classes([EstAdministrateur])
+@permission_classes([AllowAny])
 def list_categorie(request):
     try :
         categories = Categorie.objects.all()
+        
         serializer = CategorieSerializer(categories, many=True)
         return Response({
             "success":True,
@@ -104,6 +107,7 @@ def detail_categorie(request,identifiant):
     
     # Requette GET
     if request.method == 'GET':
+        
         try :
             serializer = CategorieSerializer(categorie)
             return Response({
@@ -193,47 +197,59 @@ def delete_Categorie(request, identifiant):
 
 # Lister les produits
 @api_view(['GET'])
-# @permission_classes([EstAdministrateur,EstGerant])
 @permission_classes([AllowAny])
 def list_produit(request):
-    try :
+    try:
+        search = request.GET.get('search')
+        tri_categorie = request.GET.get("categorie")       # filtre par catégorie
+        sortBy = request.GET.get("tri_par")          # tri par prix/date
 
-        search = request.GET.get('search','')
+        # Base queryset
+        produits = Produit.objects.filter(quantite_produit_disponible__gt=5)
 
-        produits = Produit.objects.all().order_by('-date_creation')
-
-        if search :
+        # Recherche
+        if search:
             produits = produits.filter(
-                Q(nom_produit__icontains=search) | Q(prix_unitaire_produit__icontains=search)
+                Q(nom_produit__icontains=search)
             )
 
-        # Creation d'une clé de cache
-        limit = request.GET.get('limit','10')
-        offset = request.GET.get('offset','0')
+        # Filtre par catégorie
+        if tri_categorie:
+            produits = produits.filter(categorie_produit__nom_categorie=tri_categorie)
+
+        # Tri
+        if sortBy:
+            if sortBy == "prix_croissant":
+                produits = produits.order_by("prix_unitaire_produit")
+            elif sortBy == "prix_decroissant":
+                produits = produits.order_by("-prix_unitaire_produit")
+            elif sortBy == "nouveaute":
+                produits = produits.order_by("-date_creation")
+        else:
+            # tri par défaut
+            produits = produits.order_by("-date_creation")
 
         # Pagination
         paginator = LimitOffsetPagination()
         paginator.default_limit = 10
         produits_page = paginator.paginate_queryset(produits, request)
 
-
         serializer = ProduitSerializer(produits_page, many=True)
         paginator_response = paginator.get_paginated_response(serializer.data)
         response_data = paginator_response.data
 
-
         return Response({
-            "success":True,
+            "success": True,
             "data": response_data
         }, status=status.HTTP_200_OK)
-    except Exception as e :
+
+    except Exception as e:
         import traceback
         traceback.print_exc()
-        print(Exception)
         return Response({
-            "success":False,
-            "errors":"Erreur interne du serveur",
-            "message":str(e)
+            "success": False,
+            "errors": "Erreur interne du serveur",
+            "message": str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
@@ -311,51 +327,33 @@ def create_produit(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
-# Voir et modifier les details du Client
-@api_view(['GET','PUT'])
-@permission_classes([EstAdministrateur])
-def detail_produit(request,identifiant):
-    nom = request.data.get('nom_categorie')
 
-    # Requette GET
+@api_view(['GET', 'PUT'])
+@permission_classes([AllowAny])
+def detail_produit(request, identifiant):
+    # GET : récupérer un produit
     if request.method == 'GET':
-        # Verifier la categorie
-        try :
+        try:
             produit = Produit.objects.get(identifiant_produit=identifiant)
-        except Categorie.DoesNotExist:
-                return Response({
-                    "success":False,
-                    "errors":"Cette catégorie n'existe pas"
-                }, status=status.HTTP_400_BAD_REQUEST)
-        
-        try :
             serializer = ProduitSerializer(produit)
             return Response({
-                    "success":True,
-                    "data":serializer.data
-                }, status=status.HTTP_200_OK)
-        except Exception as e :
-            import traceback
-            traceback.print_exc()
-            print(Exception)
+                "success": True,
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        except Produit.DoesNotExist:
             return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
+                "success": False,
+                "errors": "Produit introuvable."
             }, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e :
-            import traceback
-            traceback.print_exc()
-            print(Exception)
+        except Exception as e:
             return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    # Requette PUT
-    if request.method == 'PUT':
 
+    # PUT : modifier un produit (admin uniquement)
+    if request.method == 'PUT' and getattr(request.user, "role", None) == "admin":
         try:
             produit = Produit.objects.get(identifiant_produit=identifiant)
         except Produit.DoesNotExist:
@@ -365,10 +363,28 @@ def detail_produit(request,identifiant):
             }, status=status.HTTP_404_NOT_FOUND)
 
         nom = request.data.get('nom_produit')
-        prix_unitaire = Decimal(request.data.get('prix_unitaire_produit'))
-        quantite_produit = int(request.data.get('quantite_produit_disponible'))
-        seuil_produit = int(request.data.get('seuil_alerte_produit'))
+        prix_unitaire = request.data.get('prix_unitaire_produit')
+        quantite_produit = request.data.get('quantite_produit_disponible')
+        seuil_produit = request.data.get('seuil_alerte_produit')
         categorie_uuid = request.data.get('categorie_produit')
+
+        # Vérification des champs obligatoires
+        if nom is None or prix_unitaire is None or quantite_produit is None or seuil_produit is None or categorie_uuid is None:
+            return Response({
+                "success": False,
+                "errors": "Tous les champs sont obligatoires."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Conversion des valeurs
+        try:
+            prix_unitaire = Decimal(prix_unitaire)
+            quantite_produit = int(quantite_produit)
+            seuil_produit = int(seuil_produit)
+        except Exception:
+            return Response({
+                "success": False,
+                "errors": "Valeurs numériques invalides."
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         # Vérification de la catégorie
         try:
@@ -379,43 +395,32 @@ def detail_produit(request,identifiant):
                 "errors": "Catégorie introuvable."
             }, status=status.HTTP_404_NOT_FOUND)
 
-        # Verifier les champs
-        if  not nom or not prix_unitaire or not quantite_produit or not seuil_produit or not categorie : 
-            return Response({
-                "success":False,
-                "errors":"Le champs nom est obligatoire"
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Verifier que le seuil est inferieur à la quantité du produit
+        # Vérifier que le seuil est inférieur à la quantité
         if seuil_produit >= quantite_produit:
             return Response({
-                "success":False,
-                "errors":"Le seuil doit être inférieure à la quantité"
-            },status=status.HTTP_400_BAD_REQUEST)
+                "success": False,
+                "errors": "Le seuil doit être inférieur à la quantité."
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-        try :
-            serializer = ProduitSerializer(produit, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save(categorie_produit=categorie)
-                return Response({
-                    "success":True,
-                    "message":"Informations modifiées avec succès",
-                    "data":serializer.data
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    "success":False,
-                    "errors":serializer.errors
-                }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e :
-            import traceback
-            traceback.print_exc()
-            print(Exception)
+        # Mise à jour du produit
+        serializer = ProduitSerializer(produit, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(categorie_produit=categorie)
             return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                "success": True,
+                "message": "Informations modifiées avec succès",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "success": False,
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({
+        "success": False,
+        "errors": "Méthode non autorisée ou accès refusé."
+    }, status=status.HTTP_403_FORBIDDEN)
         
 # Requette DELETE
 @api_view(['DELETE'])

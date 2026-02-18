@@ -23,6 +23,7 @@ class Commande(models.Model):
     utilisateur=models.ForeignKey(Utilisateur, on_delete=models.CASCADE, null=True, blank=True, related_name="commandes_utilisateurs")
     date_commande = models.DateTimeField(default=timezone.now)
     code_livraison = models.CharField(max_length=20, editable=False, default="MARCHEPRO-")
+    lieu_livraison = models.CharField(max_length=250, editable=False, default="yamoussoukro")
     total_ht = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     tva = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_ttc = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -49,13 +50,21 @@ class Commande(models.Model):
         """
         details = self.details_commandes.all()
         total_ht = sum(detail.sous_total for detail in details)
-        tva = total_ht * Decimal('0.0') 
-        total_ttc = total_ht + tva
 
+        # TVA (exemple à 18%)
+        tva_rate = Decimal('0')
+        tva = total_ht * tva_rate
+
+        # Frais de livraison
+        livraison = Decimal('2000') if self.lieu_livraison.lower() != 'yamoussoukro' else Decimal('0')
+
+        # Totaux
         self.total_ht = total_ht
         self.tva = tva
-        self.total_ttc = total_ttc
+        self.total_ttc = total_ht + tva + livraison
+
         self.save()
+
 
 
 # Modèle Detail de la commande
