@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'graphene_django',
 
     # liste des applications
     'authentification',
@@ -72,6 +73,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'africart_serveur.urls'
+
+# SCHEMIN du schema GraphQL
+GRAPHENE = {
+    'SCHEMA': 'africart_serveur.schema.schema'
+}
 
 TEMPLATES = [
     {

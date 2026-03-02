@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 
 from utilisateurs.models import Utilisateur
 from utilisateurs.serializers import UtilisateurSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 # Connexion utilisateur
@@ -59,6 +60,7 @@ def login_utilisateur(request):
         response = Response({
             "success": True,
             "message": "Connexion établie",
+            "token": token.key,
             "user": info_user
         }, status=status.HTTP_200_OK)
 
@@ -68,7 +70,7 @@ def login_utilisateur(request):
             value=token.key,
             httponly=True,
             secure=False,      
-            samesite="Lax", 
+            samesite="Strict", 
             max_age=43200
         )
         return response
@@ -80,7 +82,7 @@ def login_utilisateur(request):
 
 
 # Déconnexion utilisateur
-@api_view(['POST'])
+@api_view(['GET'])
 def logout_utilisateur(request):
     try:
         # Supprime le token en base
@@ -104,19 +106,62 @@ def logout_utilisateur(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Vérification de session via cookie HttpOnly
+# Vérification de session utilisateur
+    
 @api_view(['GET'])
 def check_session(request):
-    if request.user.is_authenticated:
+    # lire le token dans les cookies
+    token_key = request.COOKIES.get("auth_token")
+
+    if not token_key:
+        return Response(
+            {"success": False, "authenticated": False},
+            status=401
+        )
+
+    try:
+        token = Token.objects.get(key=token_key)
+        user = token.user
+
         return Response({
             "success": True,
             "authenticated": True,
-            "user": UtilisateurSerializer(request.user).data
+            "user": UtilisateurSerializer(user).data
         }, status=200)
-    return Response({
-        "success": False,
-        "authenticated": False
-    }, status=401)
+
+    except Token.DoesNotExist:
+        return Response(
+            {"success": False, "authenticated": False},
+            status=401
+        )
+
+@api_view(['POST'])
+def mobile_check_session(request):
+    token_key = request.data.get("token_key")
+
+    if not token_key:
+        return Response(
+            {"success": False, "authenticated": False},
+            status=401
+        )
+
+    try:
+        token = Token.objects.get(key=token_key)
+        user = token.user
+
+        return Response({
+            "success": True,
+            "authenticated": True,
+            "user": UtilisateurSerializer(user).data
+        }, status=200)
+
+    except Token.DoesNotExist:
+        return Response(
+            {"success": False, "authenticated": False},
+            status=401
+        )
+
+
 
 
 # Changez de mot de passe

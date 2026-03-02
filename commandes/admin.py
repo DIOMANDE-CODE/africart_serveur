@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Commande, DetailCommande
+from .models import Commande, DetailCommande,ZoneLivraison
 
 # Register your models here.
 
@@ -13,6 +13,7 @@ class CommandeAdmin(admin.ModelAdmin):
         'lieu_livraison',
         'date_commande',
         'etat_commande',
+        'frais_livraison_appliques',
         'is_active',
         'total_ht',
         'tva',
@@ -38,3 +39,11 @@ class DetailCommandeAdmin(admin.ModelAdmin):
     search_fields = ('commande__identifiant_commande', 'produit__nom_produit')
     list_filter = ('produit',)
     readonly_fields = ('sous_total', 'date_creation', 'date_modification')
+
+@admin.register(ZoneLivraison)
+class ZoneLivraisonAdmin(admin.ModelAdmin):
+    list_display = ('identifiant_zone','nom_zone','frais_livraison','latitude','longitude','rayon_metres','date_creation','date_modification',)
+    search_fields = ('nom_zone',)
+    list_filter = ('nom_zone',)
+
+ 

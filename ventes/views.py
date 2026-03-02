@@ -37,7 +37,9 @@ def creer_vente(request):
 def liste_ventes(request):
     try :
 
-        ventes = Vente.objects.filter(date_vente__date=date.today()).order_by('-date_vente')
+        # ventes = Vente.objects.filter(date_vente__date=date.today()).order_by('-date_vente')
+
+        ventes = Vente.objects.all().order_by('-date_vente')
         
 
         # Creation de la clé cache

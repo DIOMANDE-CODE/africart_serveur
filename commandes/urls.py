@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import creer_commande,liste_commande_par_vendeur, detail_commande,valider_commande, liste_commande, livrer_commande, annuler_commande, liste_commande_client
+from .views import creer_commande,liste_commande_par_vendeur, detail_commande,valider_commande, liste_commande, livrer_commande, annuler_commande, liste_commande_client,voir_frais_livraison_zone
 
 urlpatterns = [
     path('creer/', creer_commande,name='creer-commande'),
@@ -9,5 +9,7 @@ urlpatterns = [
     path('valider/<str:commande_id>/', valider_commande,name='valider-commande'),
     path('livrer/<str:commande_id>/', livrer_commande,name='valider-commande'),
     path('annuler/<str:commande_id>/', annuler_commande,name='annuler_commande'),
-    path('list/<str:email_client>/', liste_commande_client,name='liste_commande_client')
+    path('list/<str:email_client>/', liste_commande_client,name='liste_commande_client'),
+    path('zone_livraison/list/', voir_frais_livraison_zone,name='voir_frais_livraison_zone'),
+
 ]

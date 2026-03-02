@@ -3,10 +3,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Commande, DetailCommande, AttributionCommande
+from .models import Commande, DetailCommande, AttributionCommande, ZoneLivraison
 from datetime import date
 from rest_framework.pagination import LimitOffsetPagination
-from .serializers import CommandeCreateSerializer, VoirCommandeSerializer, CommandeUpdateSerializer
+from .serializers import CommandeCreateSerializer, VoirCommandeSerializer, CommandeUpdateSerializer, ZoneLivraisonSerializer
 from utilisateurs.models import Utilisateur
 import uuid
 
@@ -123,7 +123,7 @@ def detail_commande(request, commande_id):
     try:
         serializer = VoirCommandeSerializer(commande)
         return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
-    except Exception as e :
+    except Exception as e : 
         return Response({
             "success":False,
             "errors":"Erreur interne du serveur",
@@ -277,3 +277,20 @@ def liste_commande_client(request,email_client):
             "errors":"Erreur interne du serveur",
             "message":str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+# Voir Zone Livraison
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def voir_frais_livraison_zone(request):
+    zones = ZoneLivraison.objects.all()
+    print(f"DEBUG: Nombre de zones trouvées : {zones.count()}")
+    for z in zones:
+        print(f"Zone: {z.nom_zone}, frais: {z.frais_livraison}, id: {z.identifiant_zone}")
+    serializer = ZoneLivraisonSerializer(zones, many=True)
+    print(f"DEBUG: Données sérialisées : {serializer.data}")
+    return Response({
+        'success': True,
+        'data': serializer.data
+    }, status=status.HTTP_200_OK)

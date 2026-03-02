@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_categorie, create_produit, list_categorie, list_produit, detail_categorie, delete_Categorie,detail_produit, delete_produit, alertes_actives
+from .views import create_categorie, create_produit, list_categorie, list_produit, detail_categorie, delete_Categorie,detail_produit, delete_produit, alertes_actives, list_produit_pour_personnel, noter_produit,note_moyenne_produit
 
 urlpatterns = [
     # Categories
@@ -10,11 +10,16 @@ urlpatterns = [
 
     # Produits
     path('list/', list_produit,name='list_produit'),
+    path('list/personnel/', list_produit_pour_personnel,name='list_produit_pour_personnel'),
     path('create/', create_produit,name='create_produit'),
     path('detail/<str:identifiant>/', detail_produit,name='detail_produit'),
     path('delete/<str:identifiant>/', delete_produit,name='delete_produit'),
 
     # Alertes de stock faible
     path('alerte/stock_faible/', alertes_actives,name='alertes_actives'),
+
+    # Notation des produits
+    path('noter/<str:identifiant>/', noter_produit,name='noter_produit'),
+    path('note_moyenne/<str:identifiant_produit>/', note_moyenne_produit,name='note_moyenne_produit'),
 ]
     

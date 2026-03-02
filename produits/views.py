@@ -4,11 +4,11 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from permissions import EstAdministrateur, EstGerant
 
-from .models import Categorie, Produit, AlertProduit
-from .serializers import CategorieSerializer, ProduitSerializer, AlertProduitSerializer
+from .models import Categorie, Produit, AlertProduit, NotationProduit
+from .serializers import CategorieSerializer, ProduitSerializer, AlertProduitSerializer, NotationProduitSerializer
 from decimal import Decimal
 from django.shortcuts import get_object_or_404
 import os
@@ -17,6 +17,9 @@ from rest_framework.pagination import LimitOffsetPagination
 from django.db.models import Q
 from django.core.cache import cache
 from decimal import Decimal
+from django.db.models import Case, When, Value, IntegerField, F
+from permissions import EstClient
+from django.db.models import Avg
 
 # Create your views here.
      
@@ -194,6 +197,54 @@ def delete_Categorie(request, identifiant):
 
 
 # """ Fonctiionnalités du modèle Produit """"
+# Lister les produits
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_produit_pour_personnel(request):
+    try:
+        search = request.GET.get('search')
+
+        # Base queryset
+        produits = Produit.objects.annotate(
+            critique=Case(
+                When(quantite_produit_disponible__lte=F("seuil_alerte_produit"), then=Value(1)),
+                default=Value(0),
+                output_field=IntegerField()
+            )
+        ).order_by("-critique","quantite_produit_disponible","nom_produit")
+
+
+        # Recherche
+        if search:
+            produits = produits.filter(
+                Q(nom_produit__icontains=search)
+            )
+
+        # Pagination
+        paginator = LimitOffsetPagination()
+        paginator.default_limit = 10
+        produits_page = paginator.paginate_queryset(produits, request)
+
+        serializer = ProduitSerializer(produits_page, many=True)
+        paginator_response = paginator.get_paginated_response(serializer.data)
+        response_data = paginator_response.data
+
+        return Response({
+            "success": True,
+            "data": response_data
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return Response({
+            "success": False,
+            "errors": "Erreur interne du serveur",
+            "message": str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Lister les produits ( Personnel )
 
 # Lister les produits
 @api_view(['GET'])
@@ -469,3 +520,101 @@ def alertes_actives(request):
             "errors": "Erreur interne du serveur",
             "message": str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+
+# Fonction pour la notation des produits
+
+# Fonction pour noter un produit
+@api_view(["POST"])
+@permission_classes([EstClient])
+def noter_produit(request, identifiant):
+    try:
+        produit = Produit.objects.get(identifiant_produit=identifiant)
+    except Produit.DoesNotExist:
+        return Response({
+            "success": False,
+            "errors": "Produit introuvable."
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    note = request.data.get("note_produit")
+    if note is None:
+        return Response({
+            "success": False,
+            "errors": "La note est obligatoire."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        note_found = NotationProduit.objects.get(produit=produit, utilisateur=request.user)
+        if note_found:
+            return Response({
+                "success": False,
+                "errors": "Vous avez déjà noté ce produit."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except NotationProduit.DoesNotExist:
+        pass
+
+    if type(note) is str:
+        return Response({
+            "success": False,
+            "errors": "La note doit être un entier entre 1 et 5."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        note = int(note)
+        if note < 1 or note > 5:
+            raise ValueError
+    except ValueError:
+        return Response({
+            "success": False,
+            "errors": "La note doit être un entier entre 1 et 5."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = NotationProduitSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(produit=produit, utilisateur=request.user)
+        return Response({
+            "success": True,
+            "message": "Merci pour votre note !",
+            "data": serializer.data
+        }, status=status.HTTP_201_CREATED)
+    else:
+        return Response({
+            "success": False,
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+# Fonction pour calculer la note moyenne d'un produit
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def note_moyenne_produit(request, identifiant_produit):
+    try:
+        produit = Produit.objects.get(identifiant_produit=identifiant_produit)
+    except Produit.DoesNotExist:
+        return Response({
+            "success": False,
+            "errors": "Produit introuvable."
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    notations = NotationProduit.objects.filter(produit=produit)
+    if not notations.exists():
+        return Response({
+            "success": True,
+            "data": {
+                "note_moyenne": None,
+                "nombre_notations": 0
+            }
+        }, status=status.HTTP_200_OK)
+
+    note_moyenne = notations.aggregate(moyenne=Avg('note_produit'))['moyenne']
+    nombre_notations = notations.count()
+
+    return Response({
+        "success": True,
+        "data": {
+            "note_moyenne": round(note_moyenne, 2),
+            "nombre_notations": nombre_notations
+        }
+    }, status=status.HTTP_200_OK)

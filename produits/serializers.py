@@ -1,13 +1,14 @@
 from rest_framework import serializers
-from .models import Categorie, Produit, AlertProduit
+from .models import Categorie, Produit, AlertProduit, NotationProduit
 from cloudinary.utils import cloudinary_url
+from utilisateurs.serializers import UtilisateurSerializer
 
 # Serializer de la classe Categorie
 class CategorieSerializer(serializers.ModelSerializer):
     produits = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Categorie
-        fields = ['identifiant_categorie','nom_categorie','description_categorie','date_creation','date_modification','produits']
+        fields = ['identifiant_categorie','nom_categorie','description_categorie','pourcentage_promo_categorie','prix_promo_categorie','date_creation','date_modification','produits']
         read_only_fields = ['identifiant_categorie','date_creation','date_modification']
 
     def get_produits(self, obj):
@@ -31,7 +32,7 @@ class ProduitSerializer(serializers.ModelSerializer):
     image_produit = serializers.SerializerMethodField()
     class Meta:
         model = Produit
-        fields = ['identifiant_produit','nom_produit','image_produit','thumbnail','image_produit_2','thumbnail_2','image_produit_3','thumbnail_3','description_produit','caracteristiques_produit','prix_unitaire_produit','quantite_produit_disponible','seuil_alerte_produit','categorie_produit','date_creation','date_modification']
+        fields = ['identifiant_produit','nom_produit','image_produit','thumbnail','image_produit_2','thumbnail_2','image_produit_3','thumbnail_3','description_produit','caracteristiques_produit','prix_unitaire_produit','quantite_produit_disponible','seuil_alerte_produit','pourcentage_promo','prix_promo_produit','categorie_produit','date_creation','date_modification']
         read_only_fields = ['identifiant_produit','categorie_produit','date_creation','date_modification']
 
     def get_image_produit(self, obj):
@@ -47,3 +48,13 @@ class AlertProduitSerializer(serializers.ModelSerializer):
         model = AlertProduit
         fields = '__all__'
         read_only_fields = ['identifiant_alerte','produit','date_creation']
+
+
+# Serializer de Notation Produit
+class NotationProduitSerializer(serializers.ModelSerializer):
+    produit = ProduitSerializer(required=False, read_only=True)
+    utilisateur = UtilisateurSerializer(required=False, read_only=True)
+    class Meta:
+        model = NotationProduit
+        fields = ['identifiant_notation','produit','utilisateur','note_produit','date_notation']
+        read_only_fields = ['identifiant_notation','produit','utilisateur','date_notation']

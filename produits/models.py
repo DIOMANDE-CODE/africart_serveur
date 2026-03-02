@@ -1,11 +1,15 @@
-from django.db import models
 import uuid
-from django.core.validators import MinValueValidator
-from PIL import Image
-import requests
 from io import BytesIO
-from cloudinary.models import CloudinaryField
+import requests
+from PIL import Image
 import cloudinary.uploader
+
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+from cloudinary.models import CloudinaryField
+from utilisateurs.models import Utilisateur
+
 
 def image_produit_par_defaut():
     return 'https://res.cloudinary.com/darkqhocp/image/upload/v1770326117/Logo_moderne_d_AfriCart_en_couleurs_vives_kydtpd.png'
@@ -13,8 +17,20 @@ def image_produit_par_defaut():
 
 class Categorie(models.Model):
     identifiant_categorie = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    nom_categorie = models.CharField(max_length=50, verbose_name="nom catégorie", unique=True)
-    description_categorie = models.TextField(null=True, blank=True, verbose_name="description produit")
+    nom_categorie = models.CharField(max_length=50, unique=True)
+    description_categorie = models.TextField(null=True, blank=True)
+
+    pourcentage_promo_categorie = models.DecimalField(
+        max_digits=5, decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0, blank=True, null=True
+    )
+
+    prix_promo_categorie = models.DecimalField(
+        max_digits=10, decimal_places=2,
+        validators=[MinValueValidator(0)],
+        default=0, blank=True, null=True
+    )
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
@@ -27,13 +43,12 @@ class Produit(models.Model):
     identifiant_produit = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     nom_produit = models.CharField(max_length=50, unique=True)
 
-    # Images principales et secondaires
     image_produit = CloudinaryField(
         'image_produit',
         folder='mes_projets/AfriCart/produits/images/',
         default=image_produit_par_defaut,
         blank=True,
-        null=True,
+        null=True
     )
     thumbnail = models.URLField(blank=True, null=True, editable=False)
 
@@ -42,7 +57,7 @@ class Produit(models.Model):
         folder='mes_projets/AfriCart/produits/images/',
         default=image_produit_par_defaut,
         blank=True,
-        null=True,
+        null=True
     )
     thumbnail_2 = models.URLField(blank=True, null=True, editable=False)
 
@@ -51,20 +66,26 @@ class Produit(models.Model):
         folder='mes_projets/AfriCart/produits/images/',
         default=image_produit_par_defaut,
         blank=True,
-        null=True,
+        null=True
     )
     thumbnail_3 = models.URLField(blank=True, null=True, editable=False)
 
+    categorie_produit = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name="produits")
+
     description_produit = models.TextField(blank=True, null=True)
-    caracteristiques_produit = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="caractéristiques du produit (Ex: Écran, Clavier, Souris)"
-    )
+    caracteristiques_produit = models.TextField(blank=True, null=True)
+
     prix_unitaire_produit = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    prix_promo_produit = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
     quantite_produit_disponible = models.IntegerField(validators=[MinValueValidator(0)])
     seuil_alerte_produit = models.IntegerField(validators=[MinValueValidator(0)])
-    categorie_produit = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name="produits")
+
+    pourcentage_promo = models.DecimalField(
+        max_digits=5, decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        default=0, blank=True, null=True
+    )
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
@@ -72,15 +93,19 @@ class Produit(models.Model):
     def __str__(self):
         return self.nom_produit
 
-    # Fonction générique de compression
+    # ---------- Compression image ----------
     def compress_and_upload(self, image_url, public_id):
-        response = requests.get(image_url)
-        if response.status_code == 200 and "image" in response.headers.get("Content-Type", ""):
-            img = Image.open(BytesIO(response.content))
+        try:
+            if isinstance(image_url, str) and image_url.startswith("http"):
+                response = requests.get(image_url)
+                img = Image.open(BytesIO(response.content))
+            else:
+                img = Image.open(image_url)
+
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
 
-            img.thumbnail((800, 800))  # taille max
+            img.thumbnail((1000, 1000))
             thumb_io = BytesIO()
             img.save(thumb_io, format="JPEG", quality=70)
 
@@ -89,37 +114,11 @@ class Produit(models.Model):
                 folder="mes_projets/AfriCart/produits/compressed/",
                 public_id=public_id
             )
-            return result["secure_url"]
-        return None
+            return result.get("secure_url")
+        except Exception:
+            return None
 
-    # Méthodes séparées pour chaque thumbnail
-    def update_thumbnail(self, old_instance=None):
-        if self.image_produit:
-            if not self.thumbnail or (old_instance and old_instance.image_produit.url != self.image_produit.url):
-                self.thumbnail = self.compress_and_upload(
-                    self.image_produit.url,
-                    f"thumb_{self.identifiant_produit}"
-                )
-                super().save(update_fields=["thumbnail"])
-
-    def update_thumbnail_2(self, old_instance=None):
-        if self.image_produit_2:
-            if not self.thumbnail_2 or (old_instance and old_instance.image_produit_2.url != self.image_produit_2.url):
-                self.thumbnail_2 = self.compress_and_upload(
-                    self.image_produit_2.url,
-                    f"thumb2_{self.identifiant_produit}"
-                )
-                super().save(update_fields=["thumbnail_2"])
-
-    def update_thumbnail_3(self, old_instance=None):
-        if self.image_produit_3:
-            if not self.thumbnail_3 or (old_instance and old_instance.image_produit_3.url != self.image_produit_3.url):
-                self.thumbnail_3 = self.compress_and_upload(
-                    self.image_produit_3.url,
-                    f"thumb3_{self.identifiant_produit}"
-                )
-                super().save(update_fields=["thumbnail_3"])
-
+    # ---------- Save principal ----------
     def save(self, *args, **kwargs):
         old_instance = None
         if self.pk:
@@ -128,32 +127,55 @@ class Produit(models.Model):
             except Produit.DoesNotExist:
                 pass
 
+        # calcul promo SAFE (sans save interne)
+        if self.pourcentage_promo and self.pourcentage_promo > 0:
+            self.prix_promo_produit = self.prix_unitaire_produit * (1 - self.pourcentage_promo / 100)
+        else:
+            self.prix_promo_produit = None
+
         super().save(*args, **kwargs)
 
-        # Mise à jour séparée des thumbnails
-        self.update_thumbnail(old_instance)
-        self.update_thumbnail_2(old_instance)
-        self.update_thumbnail_3(old_instance)
+        # ---------- thumbnails ----------
+        for field, thumb, prefix in [
+            ("image_produit", "thumbnail", "thumb_"),
+            ("image_produit_2", "thumbnail_2", "thumb2_"),
+            ("image_produit_3", "thumbnail_3", "thumb3_")
+        ]:
+            image = getattr(self, field)
+            image_url = image if isinstance(image, str) else getattr(image, "url", None)
 
-        # Vérification automatique du stock faible
-        if self.quantite_produit_disponible <= self.seuil_alerte_produit:
-            alerte_existante = AlertProduit.objects.filter(produit=self, statut_alerte=True).first()
-            if not alerte_existante:
-                AlertProduit.objects.create(
-                    produit=self,
-                    message_alerte=f"Le stock du produit '{self.nom_produit}' est faible "
-                                   f"({self.quantite_produit_disponible} restants)."
-                )
-        else:
-            AlertProduit.objects.filter(produit=self, statut_alerte=True).update(statut_alerte=False)
+            old_url = getattr(old_instance, field).url if old_instance and getattr(old_instance, field) else None
+
+            if image_url and (not getattr(self, thumb) or image_url != old_url):
+                setattr(self, thumb, self.compress_and_upload(image_url, f"{prefix}{self.identifiant_produit}"))
+
+        super().save(update_fields=["thumbnail", "thumbnail_2", "thumbnail_3", "prix_promo_produit"])
 
 
 class AlertProduit(models.Model):
     identifiant_alerte = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, verbose_name="alert_produit")
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     message_alerte = models.CharField(max_length=50, null=True, blank=True)
     statut_alerte = models.BooleanField(default=True)
     date_alerte = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Alerte pour {self.produit.nom_produit}"
+
+
+class NotationProduit(models.Model):
+    identifiant_notation = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name='notations_produit')
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name='notations_utilisateur')
+
+    note_produit = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+
+    date_notation = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('produit', 'utilisateur')
+
+    def __str__(self):
+        return f"Notation {self.note_produit} pour {self.produit.nom_produit}"
