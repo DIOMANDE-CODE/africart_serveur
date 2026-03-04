@@ -6,9 +6,10 @@ from .serializers import VenteCreateSerializer, VoirVenteSerializer
 from .models import Vente
 from datetime import date
 from rest_framework.pagination import LimitOffsetPagination
+from permissions import EstAdministrateur, EstGerant, EstVendeur
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstAdministrateur | EstGerant | EstVendeur])
 def creer_vente(request):
     """
     Reçoit un JSON type Facture et crée la vente avec les détails et le client.
@@ -33,7 +34,7 @@ def creer_vente(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([EstAdministrateur | EstGerant | EstVendeur])
 def liste_ventes(request):
     try :
 

@@ -5,7 +5,6 @@ from django.utils import timezone
 from decimal import Decimal
 import uuid
 from produits.models import Produit
-from math import radians, cos, sin, asin, sqrt
 from utils import calculer_distance_gps
 # Choix pour l'état de la commande
 ETAT_COMMANDE = (

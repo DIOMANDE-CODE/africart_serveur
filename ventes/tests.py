@@ -1,3 +1,4 @@
-from django.test import TestCase
+"""Tests pour l'application ventes.
 
-# Create your tests here.
+Les cas de test peuvent être ajoutés ici.
+"""

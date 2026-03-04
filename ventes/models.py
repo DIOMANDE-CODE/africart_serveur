@@ -1,6 +1,5 @@
 from django.db import models
 from utilisateurs.models import Utilisateur
-from clients.models import Client
 from produits.models import Produit
 from django.utils import timezone
 import uuid

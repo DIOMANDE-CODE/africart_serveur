@@ -7,6 +7,6 @@ from django.core.cache import cache
 def invalider_cache_vente(sender,instance,**kwargs):
     try:
         cache.delete_pattern('cache_vente_list_v_*')
-    except:
+    except Exception:
         current_version = cache.get('ventes_cache_version', 1)
-        cache.set('ventes_cache_version', current_version + 1, None)
+        cache.set('ventes_cache_version', current_version + 1, timeout=3600)

@@ -15,7 +15,11 @@ class EstGerant(BasePermission):
 class EstClient(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'client'
-    
+
+# verifier que l'utilisateur connecté est le vendeur
+class EstVendeur(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'vendeur'
 
 # Permission objets accordé uniquement à l'utilisateur connecté
 class IsOwner(BasePermission):

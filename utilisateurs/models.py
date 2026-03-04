@@ -89,35 +89,21 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
         return self.nom_utilisateur if self.nom_utilisateur else f"Utilisateur {self.identifiant_utilisateur}"
 
     def make_thumbnail(self):
+        """Génère une miniature en utilisant les transformations Cloudinary (plus rapide)."""
         if self.photo_profil_utilisateur and hasattr(self.photo_profil_utilisateur, "url"):
             url = self.photo_profil_utilisateur.url
-            response = requests.get(url)
-
-            if response.status_code == 200 and "image" in response.headers.get("Content-Type", ""):
-                img = Image.open(BytesIO(response.content))
-                if img.mode in ("RGBA", "P"):
-                    img = img.convert("RGB")
-
-                img.thumbnail((200, 200))
-                thumb_io = BytesIO()
-                img.save(thumb_io, format="JPEG", quality=80)
-
-                result = cloudinary.uploader.upload(
-                    thumb_io.getvalue(),
-                    folder="mes_projets/AfriCart/utilisateurs/thumbnails/",
-                    public_id=f"thumb_{self.identifiant_utilisateur}"
-                )
-                self.thumbnail = result["secure_url"]
-
+            # Cloudinary permet de créer une miniature juste en modifiant l'URL
+            # On insère 'c_fill,h_200,w_200' dans l'URL
+            if "upload/" in url:
+                self.thumbnail = url.replace("upload/", "upload/c_fill,h_200,w_200/")
+                
     def save(self, *args, **kwargs):
         old_image_url = None
         if self.pk:
-            try:
-                old_instance = Utilisateur.objects.get(pk=self.pk)
-                if old_instance.photo_profil_utilisateur and hasattr(old_instance.photo_profil_utilisateur, "url"):
-                    old_image_url = old_instance.photo_profil_utilisateur.url
-            except Utilisateur.DoesNotExist:
-                pass
+            # Récupération sans try/except silencieux
+            old_instance = Utilisateur.objects.filter(pk=self.pk).first()
+            if old_instance and old_instance.photo_profil_utilisateur and hasattr(old_instance.photo_profil_utilisateur, "url"):
+                old_image_url = old_instance.photo_profil_utilisateur.url
 
         super().save(*args, **kwargs)
 

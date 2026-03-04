@@ -122,10 +122,8 @@ class Produit(models.Model):
     def save(self, *args, **kwargs):
         old_instance = None
         if self.pk:
-            try:
-                old_instance = Produit.objects.get(pk=self.pk)
-            except Produit.DoesNotExist:
-                pass
+            # Utiliser filter().first() pour éviter un try/except silencieux
+            old_instance = Produit.objects.filter(pk=self.pk).first()
 
         # calcul promo SAFE (sans save interne)
         if self.pourcentage_promo and self.pourcentage_promo > 0:

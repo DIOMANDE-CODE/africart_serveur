@@ -4,11 +4,7 @@ from graphene_django.converter import convert_django_field
 from cloudinary.models import CloudinaryField
 from .models import Categorie, Produit
 from django.db.models import DecimalField
-from rest_framework.response import Response
-from rest_framework import status
-
-
-
+from graphql import GraphQLError
 
 # Converter global pour DecimalField → Float
 @convert_django_field.register(DecimalField)
@@ -74,35 +70,24 @@ class CreateProduit(graphene.Mutation):
     produit = graphene.Field(ProduitType)
 
     def mutate(root, info, nom_produit, categorie_produit, prix_unitaire_produit, quantite_produit_disponible, seuil_alerte_produit):
-          # Verifier les champs
-        if  not nom_produit or not prix_unitaire_produit or not quantite_produit_disponible or not seuil_alerte_produit or not categorie_produit : 
-            return Response({
-                "success":False,
-                "errors":"Le champs nom est obligatoire"
-            }, status=status.HTTP_400_BAD_REQUEST)
+        # Vérifier les champs
+        if (not nom_produit or prix_unitaire_produit is None or
+                quantite_produit_disponible is None or seuil_alerte_produit is None or not categorie_produit):
+            raise GraphQLError("Tous les champs sont obligatoires.")
         
             
         # Verifier que le produit n'existe pas
         if Produit.objects.filter(nom_produit=nom_produit).exists():
-            return Response({
-                "success":False,
-                "errors":"Ce produit existe dejà"
-            }, status=status.HTTP_409_CONFLICT)
+            raise GraphQLError("Ce produit existe déjà.")
         
         # Verifier que le seuil est inferieur à la quantité du produit
         if seuil_alerte_produit >= quantite_produit_disponible:
-            return Response({
-                "success":False,
-                "errors":"Le seuil doit être inférieure à la quantité"
-            },status=status.HTTP_400_BAD_REQUEST)
+            raise GraphQLError("Le seuil doit être inférieur à la quantité disponible.")
 
-        categorie = Categorie.objects.get(identifiant_categorie=categorie_produit)
-        
-        if not categorie:
-            return Response({
-                "success":False,
-                "errors":"La catégorie spécifiée n'existe pas"
-            }, status=status.HTTP_400_BAD_REQUEST) 
+        try:
+            categorie = Categorie.objects.get(identifiant_categorie=categorie_produit)
+        except Categorie.DoesNotExist:
+            raise GraphQLError("La catégorie spécifiée n'existe pas.")
             
         produit = Produit(
             nom_produit=nom_produit,

@@ -1,12 +1,8 @@
-from django.shortcuts import render
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from permissions import EstAdministrateur, EstClient
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from permissions import EstAdministrateur
 
 from .models import Client
 from .serializers import ClientSerializer
@@ -14,20 +10,19 @@ from .serializers import ClientSerializer
 from rest_framework.pagination import LimitOffsetPagination
 
 import re
-from datetime import date
-
-from django.core.cache import cache
 from django.utils import timezone
+from permissions import EstAdministrateur, EstGerant
 
 # Create your views here.
 
 # Fonction pour lister les Clients
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([EstAdministrateur | EstGerant])
 def list_client(request):
     try :
-        today = timezone.now()
-        clients = Client.objects.filter(date_creation__date=today).order_by('-date_creation')
+        # today = timezone.now()
+        # clients = Client.objects.filter(date_creation__date=today).order_by('-date_creation')
+        clients = Client.objects.all().order_by('-date_creation')
 
         # Créer la clé du cache
         limit = request.GET.get("limit","10")
@@ -56,6 +51,7 @@ def list_client(request):
 
 # Fonction de creation d'un Client
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def create_client(request):
     nom = request.data.get('nom_client')
     numero = request.data.get('numero_telephone_client')
@@ -108,7 +104,7 @@ def create_client(request):
 
 # Voir et modifier les details du Client
 @api_view(['GET','PUT'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def detail_client(request,identifiant):
     nom = request.data.get('nom_client')
     numero = request.data.get('numero_telephone_client')
@@ -190,7 +186,7 @@ def detail_client(request,identifiant):
         
 # Requette DELETE
 @api_view(['DELETE'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def delete_Client(request, identifiant):
     try :
         client = Client.objects.get(identifiant_client=identifiant)

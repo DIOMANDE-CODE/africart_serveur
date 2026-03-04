@@ -1,21 +1,19 @@
-from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Commande, DetailCommande, AttributionCommande, ZoneLivraison
+from .models import Commande, ZoneLivraison
 from datetime import date
 from rest_framework.pagination import LimitOffsetPagination
 from .serializers import CommandeCreateSerializer, VoirCommandeSerializer, CommandeUpdateSerializer, ZoneLivraisonSerializer
-from utilisateurs.models import Utilisateur
-import uuid
+from permissions import EstAdministrateur, EstGerant, EstClient, EstVendeur
 
 
 # Create your views here.
 
 # Fonction de création de nouvelle commande
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([EstClient | EstGerant | EstAdministrateur])
 def creer_commande(request):
     """
     Recoit un JSON et creer la commande avec les details des produits commandés et du client
@@ -46,12 +44,13 @@ def creer_commande(request):
             "message":str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-# iste des commandes
+# Liste des commandes
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def liste_commande(request):
     try:
-        commandes = Commande.objects.filter(date_creation__date=date.today()).order_by('-date_creation')
+        # commandes = Commande.objects.filter(date_creation__date=date.today()).order_by('-date_creation')
+        commandes = Commande.objects.all().order_by('-date_creation')
         
         limit = request.GET.get("limit","10")
         offset = request.GET.get("offset","0")
@@ -77,7 +76,7 @@ def liste_commande(request):
 
 # Fonction pour lister les commandes par vendeur
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur])
 def liste_commande_par_vendeur(request):
     user = request.user
 
@@ -88,7 +87,9 @@ def liste_commande_par_vendeur(request):
         }, status=403)
     else:
         try:
-            commandes = Commande.objects.filter(utilisateur=user,date_commande__date=date.today()).order_by('-date_commande')
+            commandes = Commande.objects.filter(utilisateur=user).order_by('-date_commande')
+
+            # commandes = Commande.objects.filter(utilisateur=user,date_commande__date=date.today()).order_by('-date_commande')
 
             limit = request.GET.get("limit","10")
             offset = request.GET.get("offset","0")
@@ -113,7 +114,7 @@ def liste_commande_par_vendeur(request):
 
 # Fonction pour voir les details d'une commande
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur | EstClient])
 def detail_commande(request, commande_id):
     try:
         commande = Commande.objects.get(identifiant_commande = commande_id)
@@ -132,7 +133,7 @@ def detail_commande(request, commande_id):
     
 # Fonction pour valider la commande
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def valider_commande(request, commande_id):
     user = request.user
     if user.role != "vendeur":
@@ -175,7 +176,7 @@ def valider_commande(request, commande_id):
 
 # Fonction pour valider livraison de la commande
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def livrer_commande(request, commande_id):
     user = request.user
     if user.role != "vendeur":
@@ -217,7 +218,7 @@ def livrer_commande(request, commande_id):
 
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def annuler_commande(request,commande_id):
     user = request.user
     if user.role != "vendeur":
@@ -261,10 +262,10 @@ def annuler_commande(request,commande_id):
 
 # Voir les commandes du client connectés
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([EstClient | EstGerant | EstAdministrateur])
 def liste_commande_client(request,email_client):
     try:
-        commande = Commande.objects.filter(client__email_client=email_client).order_by("date_commande")
+        commande = Commande.objects.filter(client__email_client=email_client).order_by("-date_commande")
     except Commande.DoesNotExist:  
         return Response({'success': False, 'message': 'Commande non trouvée'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -279,10 +280,9 @@ def liste_commande_client(request,email_client):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 # Voir Zone Livraison
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([EstVendeur | EstGerant | EstAdministrateur | EstClient])
 def voir_frais_livraison_zone(request):
     zones = ZoneLivraison.objects.all()
     print(f"DEBUG: Nombre de zones trouvées : {zones.count()}")

@@ -17,26 +17,27 @@ class VenteCreateSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
-
-
         # Créer la vente
         utilisateur = self.context['request'].user
-        vente = Vente.objects.create(
-            utilisateur=utilisateur
-        )
+        vente = Vente.objects.create(utilisateur=utilisateur)
 
-        # Créer les détails de vente
+        # Précharger les produits pour éviter un N+1 et empêcher les créations implicites
+        identifiants = [item['identifiant_produit'] for item in items_data]
+        produits_map = {
+            str(p.identifiant_produit): p
+            for p in Produit.objects.filter(identifiant_produit__in=identifiants)
+        }
+
+        manquants = [pid for pid in identifiants if str(pid) not in produits_map]
+        if manquants:
+            raise serializers.ValidationError({
+                "items": [f"Produit introuvable pour l'identifiant {m}." for m in manquants]
+            })
+
+        # Créer les détails de vente et mettre à jour le stock
         for item in items_data:
-            produit, _ = Produit.objects.get_or_create(
-                identifiant_produit=item['identifiant_produit'],
-                defaults={
-                    'nom_produit': item['nom_produit'],
-                    'prix_unitaire': item['prix_unitaire_produit'],
-                    'quantite_disponible': item['quantite_produit_disponible']
-                }
-            )
+            produit = produits_map[str(item['identifiant_produit'])]
 
-            # Décrémenter le stock
             produit.quantite_produit_disponible -= item['quantite_produit_disponible']
             produit.save()
 

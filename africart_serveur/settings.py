@@ -26,7 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY='django-insecure-q9md!#_b8)rl(qie9dfn-(q=v%q4e!(x@q7+*q-4q0q%b!tes#'
+# En production, définir SECRET_KEY via les variables d'environnement.
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default='django-insecure-q9md!#_b8)rl(qie9dfn-(q=v%q4e!(x@q7+*q-4q0q%b!tes#'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
@@ -171,8 +175,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/min',
-        'user': '100/min'
+        'anon': '300/min',
+        'user': '500/min'
     },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
@@ -183,6 +187,9 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     }
 }
+
+# Sessions : stockage explicite en base de données pour un partage correct entre workers
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
 # Configuration CORS

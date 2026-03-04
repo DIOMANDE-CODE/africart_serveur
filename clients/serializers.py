@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Client
-from django.contrib.auth.hashers import make_password
 
 
 # Creation des serializers

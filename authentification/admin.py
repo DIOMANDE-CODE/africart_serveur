@@ -1,3 +1,4 @@
-from django.contrib import admin
+"""Admin configuration pour l'application authentification.
 
-# Register your models here.
+Les modèles peuvent être enregistrés ici si nécessaire.
+"""

@@ -9,7 +9,7 @@ def invalider_cache_produit (sender,instance,**kwargs):
         cache.delete_pattern('produit_list_*')
         print("cache produit invalidé")
 
-    except:
-        keys_to_delete = []
+    except Exception:
         current_version = cache.get('produits_cache_version', 1)
-        cache.set('produits_cache_version', current_version + 1, None)
+        # TTL explicite pour éviter une entrée de cache sans expiration
+        cache.set('produits_cache_version', current_version + 1, timeout=3600)

@@ -91,7 +91,21 @@ class CommandeCreateSerializer(serializers.Serializer):
             else:
                 frais_livraison = Decimal('1000') if 'yamoussoukro' in lieu_livraison.lower() else Decimal('3000')
 
-            # 4. Création Commande
+            # 4. Précharger les produits pour éviter un N+1
+            identifiants = [item['identifiant_produit'] for item in items_data]
+            produits_map = {
+                str(p.identifiant_produit): p
+                for p in Produit.objects.filter(identifiant_produit__in=identifiants)
+            }
+
+            # Vérifier que tous les produits existent
+            missing = [pid for pid in identifiants if str(pid) not in produits_map]
+            if missing:
+                raise serializers.ValidationError({
+                    "items": [f"Produit introuvable pour l'identifiant {m}." for m in missing]
+                })
+
+            # 5. Création Commande
             commande = Commande.objects.create(
                 client=client,
                 utilisateur=utilisateur,
@@ -104,12 +118,11 @@ class CommandeCreateSerializer(serializers.Serializer):
                 longitude_client=long_c
             )
 
-            # 5. Articles & Stocks
+            # 6. Articles & Stocks
             for item in items_data:
-                produit = Produit.objects.get(identifiant_produit=item['identifiant_produit'])
-                produit.quantite_produit_disponible -= item['quantite_produit']
-                produit.save()
+                produit = produits_map[str(item['identifiant_produit'])]
 
+                # La mise à jour des stocks est gérée dans DetailCommande.save()
                 DetailCommande.objects.create(
                     commande=commande,
                     produit=produit,

@@ -1,25 +1,21 @@
-from django.shortcuts import render
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from permissions import EstAdministrateur, EstGerant
+from permissions import EstAdministrateur
 
 from .models import Categorie, Produit, AlertProduit, NotationProduit
 from .serializers import CategorieSerializer, ProduitSerializer, AlertProduitSerializer, NotationProduitSerializer
 from decimal import Decimal
-from django.shortcuts import get_object_or_404
 import os
 
 from rest_framework.pagination import LimitOffsetPagination
 from django.db.models import Q
 from django.core.cache import cache
-from decimal import Decimal
 from django.db.models import Case, When, Value, IntegerField, F
 from permissions import EstClient
 from django.db.models import Avg
+from permissions import EstVendeur, EstGerant, EstAdministrateur, EstClient
 
 # Create your views here.
      
@@ -27,7 +23,6 @@ from django.db.models import Avg
 
 # Lister les categories
 @api_view(['GET'])
-# @permission_classes([EstAdministrateur])
 @permission_classes([AllowAny])
 def list_categorie(request):
     try :
@@ -48,7 +43,7 @@ def list_categorie(request):
 
 # Ajouter une catégorie
 @api_view(['POST'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def create_categorie(request):
     print(request.data)
     nom = request.data.get('nom_categorie')
@@ -94,7 +89,7 @@ def create_categorie(request):
     
 # Voir et modifier les details categorie
 @api_view(['GET','PUT'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def detail_categorie(request,identifiant):
     nom = request.data.get('nom_categorie')
 
@@ -169,7 +164,7 @@ def detail_categorie(request,identifiant):
         
 # Requette DELETE
 @api_view(['DELETE'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def delete_Categorie(request, identifiant):
     try :
         categorie = Categorie.objects.get(identifiant_client=identifiant)
@@ -306,7 +301,7 @@ def list_produit(request):
 
 # Ajouter un produit
 @api_view(['POST'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def create_produit(request):
     nom = request.data.get('nom_produit')
     prix_unitaire = Decimal(request.data.get('prix_unitaire_produit'))
@@ -380,7 +375,7 @@ def create_produit(request):
     
 
 @api_view(['GET', 'PUT'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def detail_produit(request, identifiant):
     # GET : récupérer un produit
     if request.method == 'GET':
@@ -475,7 +470,7 @@ def detail_produit(request, identifiant):
         
 # Requette DELETE
 @api_view(['DELETE'])
-@permission_classes([EstAdministrateur])
+@permission_classes([EstAdministrateur | EstGerant])
 def delete_produit(request, identifiant):
     try :
         produit = Produit.objects.get(identifiant_produit=identifiant)

@@ -1,3 +1,4 @@
-from django.contrib import admin
+"""Admin configuration pour l'application statistiques.
 
-# Register your models here.
+Les modèles de statistiques peuvent être enregistrés ici au besoin.
+"""
