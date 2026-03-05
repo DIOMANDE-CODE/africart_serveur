@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from clients.models import Client
 from rest_framework.permissions import IsAuthenticated
 from permissions import EstAdministrateur, EstGerant
+import re
 
 import re
 
@@ -60,6 +61,32 @@ def create_utilisateur(request):
     password = request.data.get('password')
     role = request.data.get('role')
 
+
+    # Verifier le mot de passe respecte les critères de sécurité
+    if len(password) < 6:
+        return Response({
+            "success":False,
+            "errors":"Le mot de passe doit contenir au moins 6 caractères."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    if not re.search(r'[A-Z]', password):
+        return Response({
+            "success":False,
+            "errors":"Le mot de passe doit contenir au moins une lettre majuscule."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not re.search(r'[a-z]', password):
+        return Response({
+            "success":False,
+            "errors":"Le mot de passe doit contenir au moins une lettre minuscule."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not re.search(r'\d', password):
+        return Response({
+            "success":False,
+            "errors":"Le mot de passe doit contenir au moins un chiffre."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
     
     # Verification liée à la création d'un compte client
     if role == 'client':
@@ -68,8 +95,10 @@ def create_utilisateur(request):
                 "success":False,
                 "errors":"Tous les champs sont obligatoires"
             }, status=status.HTTP_400_BAD_REQUEST)
-        
 
+
+
+        
          # Verifier que l'email n'existe pas
         if Utilisateur.objects.filter(email_utilisateur=email).exists():
             return Response({
@@ -283,7 +312,34 @@ def detail_utilisateur(request):
                     "errors":"Le nouveau mot de passe doit être différent du mot de passe actuel"
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Vérification du mot de passe
+        # Verifier le nouveau mot de passe respecte les critères de sécurité
+        if len(nouveau_mdp) < 6:
+            return Response({
+                "success":False,
+                "errors":"Le mot de passe doit contenir au moins 6 caractères."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not re.search(r'[A-Z]', nouveau_mdp):
+            return Response({
+                "success":False,
+                "errors":"Le mot de passe doit contenir au moins une lettre majuscule."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not re.search(r'[a-z]', nouveau_mdp):
+            return Response({
+                "success":False,
+                "errors":"Le mot de passe doit contenir au moins une lettre minuscule."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not re.search(r'\d', nouveau_mdp):
+            return Response({
+                "success":False,
+                "errors":"Le mot de passe doit contenir au moins un chiffre."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+            
+
+        # Vérification du mot de passe actuel
         if ancien_code :
             if not user_check.check_password(ancien_code):
                 return Response({
