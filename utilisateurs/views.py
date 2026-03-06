@@ -118,7 +118,7 @@ def create_utilisateur(request):
 
         # Verifier la validité du numéro
         if numero.isdigit():
-            pattern = r'^(?:\+225|00225)?(01|05|07|25|27)\d{8}$'
+            pattern = r'^(?:\+225|00225)?(01|05|07)\d{8}$'
             if not re.match(pattern,numero):
                 return Response({
                     "success":False,
@@ -206,7 +206,7 @@ def create_utilisateur(request):
             }, status=status.HTTP_409_CONFLICT)
         
         if numero.isdigit():
-            pattern = r'^(?:\+225|00225)?(01|05|07|25|27)\d{8}$'
+            pattern = r'^(?:\+225|00225)?(01|05|07)\d{8}$'
             if not re.match(pattern,numero):
                 return Response({
                     "success":False,
@@ -287,7 +287,7 @@ def detail_utilisateur(request):
 
         if numero:
             # Format Côte d'Ivoire (10 chiffres)
-            pattern = r'^(?:\+225|00225)?(01|05|07|25|27)\d{8}$'
+            pattern = r'^(?:\+225|00225)?(01|05|07)\d{8}$'
             if not (str(numero).isdigit() and re.match(pattern, str(numero))):
                 return Response({
                     "success": False, 

@@ -149,6 +149,30 @@ class Produit(models.Model):
 
         super().save(update_fields=["thumbnail", "thumbnail_2", "thumbnail_3", "prix_promo_produit"])
 
+        # ---------- Alert logic: create or update AlertProduit ----------
+        try:
+            # If stock is at or below threshold, ensure an active alert exists
+            if self.quantite_produit_disponible <= self.seuil_alerte_produit:
+                alert = AlertProduit.objects.filter(produit=self).first()
+                if alert:
+                    if not alert.statut_alerte:
+                        alert.statut_alerte = True
+                        if not alert.message_alerte:
+                            alert.message_alerte = f"Stock faible: {self.quantite_produit_disponible} <= {self.seuil_alerte_produit}"
+                        alert.save(update_fields=["statut_alerte", "message_alerte"])
+                else:
+                    AlertProduit.objects.create(
+                        produit=self,
+                        statut_alerte=True,
+                        message_alerte=f"Stock faible: {self.quantite_produit_disponible} <= {self.seuil_alerte_produit}"
+                    )
+            else:
+                # If stock has been replenished above threshold, deactivate any active alerts
+                AlertProduit.objects.filter(produit=self, statut_alerte=True).update(statut_alerte=False)
+        except Exception:
+            # Do not break saving on alert errors; log could be added later
+            pass
+
 
 class AlertProduit(models.Model):
     identifiant_alerte = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
