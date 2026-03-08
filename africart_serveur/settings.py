@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'produits',
     'utilisateurs',
     'ventes',
+    'statistiques',
+    'service_client',
+    'recommandations',
 
     # CDN Cloudinary
     'cloudinary',

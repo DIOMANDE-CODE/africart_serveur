@@ -32,6 +32,8 @@ urlpatterns = [
     path('ventes/', include('ventes.urls')),
     path('statistiques/', include('statistiques.urls')),
     path('commandes/', include('commandes.urls')),
+    path('service-client/', include('service_client.urls')),
+    path('recommandations/', include('recommandations.urls')),
     path('', lambda request: HttpResponse("Bienvenue sur AfriCart")),
    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 
