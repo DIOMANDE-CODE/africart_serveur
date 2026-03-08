@@ -27,6 +27,14 @@ class Client(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now = True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['utilisateur']),
+            models.Index(fields=['numero_telephone_client']),
+            models.Index(fields=['date_creation']),
+            models.Index(fields=['role', 'date_creation']),
+        ]
+
     def __str__(self):
         return self.nom_client
     

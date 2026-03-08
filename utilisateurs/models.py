@@ -84,6 +84,14 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email_utilisateur"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['numero_telephone_utilisateur']),
+            models.Index(fields=['role', 'date_creation']),
+            models.Index(fields=['is_active', 'date_creation']),
+            models.Index(fields=['date_creation']),
+        ]
+
 
     def __str__(self):
         return self.nom_utilisateur if self.nom_utilisateur else f"Utilisateur {self.identifiant_utilisateur}"

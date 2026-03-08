@@ -13,6 +13,12 @@ class chatMessage(models.Model):
 
     class Meta:
         ordering = ['timestamp'] # Important pour l'ordre chronologique
+        indexes = [
+            models.Index(fields=['utilisateur', 'timestamp']),
+            models.Index(fields=['role', 'timestamp']),
+            models.Index(fields=['timestamp']),
+        ]
+        
 
     def __str__(self):
         return f"{self.utilisateur.email_utilisateur} - {self.message[:20]}..."

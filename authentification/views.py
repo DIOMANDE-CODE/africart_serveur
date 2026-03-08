@@ -74,7 +74,8 @@ def login_utilisateur(request):
                 value=token.key,
                 httponly=True,
                 secure=False,
-                samesite="Strict",
+                samesite="Lax",
+                path="/",
                 max_age=43200
             )
             return response
@@ -131,31 +132,34 @@ def login_token(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Déconnexion utilisateur
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_utilisateur(request):
     try:
-        # Supprime le token en base
-        if request.user.is_authenticated:
+        # 1. Supprime le token physique en base de données
+        if hasattr(request.user, 'auth_token'):
             request.user.auth_token.delete()
+        
+        # 2. Déconnexion de la session Django (si utilisée)
+        from django.contrib.auth import logout
+        logout(request)
 
         response = Response({
             "success": True,
-            "message": "Compte déconnecté"
+            "message": "Déconnexion réussie"
         }, status=status.HTTP_200_OK)
 
-        # Supprime le cookie côté navigateur
-        response.delete_cookie('auth_token')
+        # 3. Supprime le cookie avec les bons paramètres
+        # samesite et path doivent correspondre à ceux utilisés lors du login
+        response.delete_cookie('auth_token', path='/', samesite='Lax')
+        
         return response
 
     except Exception as e:
         return Response({
             "success": False,
-            "errors": "Erreur interne du serveur",
-            "message": str(e)
+            "message": "Erreur lors de la déconnexion"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -58,6 +58,15 @@ class Commande(models.Model):
     date_modification = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True, verbose_name="commande active")
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['utilisateur', 'date_commande']),
+            models.Index(fields=['client', 'date_commande']),
+            models.Index(fields=['etat_commande', 'date_commande']),
+            models.Index(fields=['zone']),
+            models.Index(fields=['lieu_livraison']),
+        ]
+
     def save(self, *args, **kwargs):
         # Génération de l'identifiant unique AfriCart
         if not self.identifiant_commande:
@@ -126,6 +135,13 @@ class DetailCommande(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['commande', 'produit']),
+            models.Index(fields=['produit', 'date_creation']),
+            models.Index(fields=['date_creation']),
+        ]
+
     def save(self, *args, **kwargs):
         # 1. Calcul du sous-total de la ligne
         self.sous_total = Decimal(str(self.quantite)) * self.prix_unitaire
@@ -157,6 +173,7 @@ class DetailCommande(models.Model):
 class AttributionCommande(models.Model):
     dernier_index = models.IntegerField(default=0)
     date_mise_a_jour = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return f"Index de rotation actuel : {self.dernier_index}"

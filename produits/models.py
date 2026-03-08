@@ -35,6 +35,13 @@ class Categorie(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['nom_categorie', 'date_creation']),
+            models.Index(fields=['date_creation']),
+        ]
+
     def __str__(self):
         return self.nom_categorie
 
@@ -89,6 +96,16 @@ class Produit(models.Model):
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['categorie_produit']),
+            models.Index(fields=['nom_produit']),
+            models.Index(fields=['quantite_produit_disponible']),
+            models.Index(fields=['date_creation']),
+        ]
+
 
     def __str__(self):
         return self.nom_produit
@@ -181,6 +198,13 @@ class AlertProduit(models.Model):
     statut_alerte = models.BooleanField(default=True)
     date_alerte = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['produit']),
+            models.Index(fields=['statut_alerte', 'date_alerte']),
+        ]
+
+
     def __str__(self):
         return f"Alerte pour {self.produit.nom_produit}"
 
@@ -198,6 +222,11 @@ class NotationProduit(models.Model):
 
     class Meta:
         unique_together = ('produit', 'utilisateur')
+        indexes = [
+            models.Index(fields=['produit', 'date_notation']),
+            models.Index(fields=['utilisateur', 'date_notation']),
+        ]
+
 
     def __str__(self):
         return f"Notation {self.note_produit} pour {self.produit.nom_produit}"

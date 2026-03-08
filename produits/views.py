@@ -375,7 +375,7 @@ def create_produit(request):
     
 
 @api_view(['GET', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def detail_produit(request, identifiant):
     # GET : récupérer un produit
     if request.method == 'GET':

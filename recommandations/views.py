@@ -56,11 +56,11 @@ def obtenir_recommandations(request):
                 "note": "Connectez-vous pour des recommandations personnalisées.",
                 "data": {"produits": produits},
             })
-        return Response({"type": "personnalise", "data": {"produits": _personnalise(request.user, limite)}})
+        return Response({"type": "personnalise", "data": {"produits": _personnalise(request.user, limite)}},status=status.HTTP_200_OK)
     
     #  Best sellers globaux
     if type_reco == 'best_sellers':
-        return Response({"type": "best_sellers", "data": {"produits": _best_sellers(limite)}})
+        return Response({"type": "best_sellers", "data": {"produits": _best_sellers(limite)}},status=status.HTTP_200_OK)
     
     # Type necessistant un produit_id
     if not produit_id:
@@ -82,7 +82,7 @@ def obtenir_recommandations(request):
     if not produits:
         produits = _best_sellers(limite)
 
-    return Response({"type": type_reco, "data": {"produits": produits}})
+    return Response({"type": type_reco, "data": {"produits": produits}},status=status.HTTP_200_OK)
 
 
     # ─── Helpers internes ─────────────────────────────────────────────────────────

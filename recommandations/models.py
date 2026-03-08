@@ -17,7 +17,7 @@ class VueProduit(models.Model):
     # Alimente chaque vue d'un produit pour alimenté le moteur de recherche
     identifiant_vue = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name="vues_produit")
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="vues_utilisateur")
+    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name="vues_utilisateur", blank=True, null=True, default=None)
     session_key = models.CharField(max_length=100, null=True, blank=True)  # Pour les utilisateurs non connectés
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -29,7 +29,8 @@ class VueProduit(models.Model):
         ordering = ['-timestamp']  # Les vues les plus récentes en premier
 
     def __str__(self):
-        return f"Vue de {self.produit.nom_produit} par {self.utilisateur.email_utilisateur} à {self.timestamp}"
+        utilisateur_str = self.utilisateur.email_utilisateur if self.utilisateur else "Utilisateur inconnu"
+        return f"Vue de {self.produit.nom_produit} par {utilisateur_str} à {self.timestamp}"
     
 
 
