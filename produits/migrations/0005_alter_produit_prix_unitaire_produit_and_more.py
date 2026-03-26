@@ -7,23 +7,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0004_alter_produit_categorie_produit'),
+        ("produits", "0004_alter_produit_categorie_produit"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='prix_unitaire_produit',
-            field=models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Prix unitaire produit'),
+            model_name="produit",
+            name="prix_unitaire_produit",
+            field=models.DecimalField(
+                decimal_places=2,
+                max_digits=10,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Prix unitaire produit",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='quantite_produit_disponible',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0)], verbose_name='quantite produit'),
+            model_name="produit",
+            name="quantite_produit_disponible",
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="quantite produit",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='seuil_alerte_produit',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0)], verbose_name='Quantite alerte du produit'),
+            model_name="produit",
+            name="seuil_alerte_produit",
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Quantite alerte du produit",
+            ),
         ),
     ]

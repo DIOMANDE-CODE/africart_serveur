@@ -7,43 +7,61 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0020_client_clients_cli_utilisa_006fd5_idx_and_more'),
-        ('commandes', '0012_commande_latitude_client_commande_longitude_client'),
-        ('produits', '0030_alertproduit_produits_al_produit_2a56c6_idx_and_more'),
+        ("clients", "0020_client_clients_cli_utilisa_006fd5_idx_and_more"),
+        ("commandes", "0012_commande_latitude_client_commande_longitude_client"),
+        ("produits", "0030_alertproduit_produits_al_produit_2a56c6_idx_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='commande',
-            index=models.Index(fields=['utilisateur', 'date_commande'], name='commandes_c_utilisa_e94610_idx'),
+            model_name="commande",
+            index=models.Index(
+                fields=["utilisateur", "date_commande"],
+                name="commandes_c_utilisa_e94610_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='commande',
-            index=models.Index(fields=['client', 'date_commande'], name='commandes_c_client__37ed7e_idx'),
+            model_name="commande",
+            index=models.Index(
+                fields=["client", "date_commande"],
+                name="commandes_c_client__37ed7e_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='commande',
-            index=models.Index(fields=['etat_commande', 'date_commande'], name='commandes_c_etat_co_7da9d5_idx'),
+            model_name="commande",
+            index=models.Index(
+                fields=["etat_commande", "date_commande"],
+                name="commandes_c_etat_co_7da9d5_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='commande',
-            index=models.Index(fields=['zone'], name='commandes_c_zone_id_bbf288_idx'),
+            model_name="commande",
+            index=models.Index(fields=["zone"], name="commandes_c_zone_id_bbf288_idx"),
         ),
         migrations.AddIndex(
-            model_name='commande',
-            index=models.Index(fields=['lieu_livraison'], name='commandes_c_lieu_li_d44095_idx'),
+            model_name="commande",
+            index=models.Index(
+                fields=["lieu_livraison"], name="commandes_c_lieu_li_d44095_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='detailcommande',
-            index=models.Index(fields=['commande', 'produit'], name='commandes_d_command_1a73b3_idx'),
+            model_name="detailcommande",
+            index=models.Index(
+                fields=["commande", "produit"], name="commandes_d_command_1a73b3_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='detailcommande',
-            index=models.Index(fields=['produit', 'date_creation'], name='commandes_d_produit_296bbf_idx'),
+            model_name="detailcommande",
+            index=models.Index(
+                fields=["produit", "date_creation"],
+                name="commandes_d_produit_296bbf_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='detailcommande',
-            index=models.Index(fields=['date_creation'], name='commandes_d_date_cr_5484da_idx'),
+            model_name="detailcommande",
+            index=models.Index(
+                fields=["date_creation"], name="commandes_d_date_cr_5484da_idx"
+            ),
         ),
     ]

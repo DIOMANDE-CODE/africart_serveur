@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0004_commande_is_active'),
+        ("commandes", "0004_commande_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='commande',
-            name='code_livraison',
-            field=models.CharField(default='MARCHEPRO-', editable=False, max_length=6),
+            model_name="commande",
+            name="code_livraison",
+            field=models.CharField(default="MARCHEPRO-", editable=False, max_length=6),
         ),
     ]

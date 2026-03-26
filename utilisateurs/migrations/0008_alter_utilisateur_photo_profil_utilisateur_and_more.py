@@ -7,18 +7,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('utilisateurs', '0007_utilisateur_thumbnail'),
+        ("utilisateurs", "0007_utilisateur_thumbnail"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='utilisateur',
-            name='photo_profil_utilisateur',
-            field=models.ImageField(blank=True, default=utilisateurs.models.photo_profil_par_defaut, null=True, upload_to='mes_projets/MarchéPro/utilisateurs/photos/', verbose_name='Photo de profil utilisateur'),
+            model_name="utilisateur",
+            name="photo_profil_utilisateur",
+            field=models.ImageField(
+                blank=True,
+                default=utilisateurs.models.photo_profil_par_defaut,
+                null=True,
+                upload_to="mes_projets/MarchéPro/utilisateurs/photos/",
+                verbose_name="Photo de profil utilisateur",
+            ),
         ),
         migrations.AlterField(
-            model_name='utilisateur',
-            name='thumbnail',
-            field=models.ImageField(blank=True, editable=False, null=True, upload_to='mes_projets/MarchéPro/utilisateurs/thumbnails/', verbose_name='Photo Profil Miniature'),
+            model_name="utilisateur",
+            name="thumbnail",
+            field=models.ImageField(
+                blank=True,
+                editable=False,
+                null=True,
+                upload_to="mes_projets/MarchéPro/utilisateurs/thumbnails/",
+                verbose_name="Photo Profil Miniature",
+            ),
         ),
     ]

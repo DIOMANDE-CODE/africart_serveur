@@ -8,18 +8,30 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('utilisateurs', '0008_alter_utilisateur_photo_profil_utilisateur_and_more'),
+        ("utilisateurs", "0008_alter_utilisateur_photo_profil_utilisateur_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='utilisateur',
-            name='photo_profil_utilisateur',
-            field=cloudinary.models.CloudinaryField(blank=True, default=utilisateurs.models.photo_profil_par_defaut, max_length=255, null=True, verbose_name='photo_profil'),
+            model_name="utilisateur",
+            name="photo_profil_utilisateur",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default=utilisateurs.models.photo_profil_par_defaut,
+                max_length=255,
+                null=True,
+                verbose_name="photo_profil",
+            ),
         ),
         migrations.AlterField(
-            model_name='utilisateur',
-            name='thumbnail',
-            field=cloudinary.models.CloudinaryField(blank=True, editable=False, max_length=255, null=True, verbose_name='thumbnail'),
+            model_name="utilisateur",
+            name="thumbnail",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                editable=False,
+                max_length=255,
+                null=True,
+                verbose_name="thumbnail",
+            ),
         ),
     ]

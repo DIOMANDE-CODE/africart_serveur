@@ -7,25 +7,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0019_alter_client_utilisateur'),
+        ("clients", "0019_alter_client_utilisateur"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='client',
-            index=models.Index(fields=['utilisateur'], name='clients_cli_utilisa_006fd5_idx'),
+            model_name="client",
+            index=models.Index(
+                fields=["utilisateur"], name="clients_cli_utilisa_006fd5_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='client',
-            index=models.Index(fields=['numero_telephone_client'], name='clients_cli_numero__447c44_idx'),
+            model_name="client",
+            index=models.Index(
+                fields=["numero_telephone_client"],
+                name="clients_cli_numero__447c44_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='client',
-            index=models.Index(fields=['date_creation'], name='clients_cli_date_cr_c7072a_idx'),
+            model_name="client",
+            index=models.Index(
+                fields=["date_creation"], name="clients_cli_date_cr_c7072a_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='client',
-            index=models.Index(fields=['role', 'date_creation'], name='clients_cli_role_ff4e54_idx'),
+            model_name="client",
+            index=models.Index(
+                fields=["role", "date_creation"], name="clients_cli_role_ff4e54_idx"
+            ),
         ),
     ]

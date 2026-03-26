@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0003_alter_commande_etat_commande'),
+        ("commandes", "0003_alter_commande_etat_commande"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='commande',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='commande active'),
+            model_name="commande",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="commande active"),
         ),
     ]

@@ -7,21 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('service_client', '0001_initial'),
+        ("service_client", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='chatmessage',
-            index=models.Index(fields=['utilisateur', 'timestamp'], name='service_cli_utilisa_b6ce7c_idx'),
+            model_name="chatmessage",
+            index=models.Index(
+                fields=["utilisateur", "timestamp"],
+                name="service_cli_utilisa_b6ce7c_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='chatmessage',
-            index=models.Index(fields=['role', 'timestamp'], name='service_cli_role_d8dd31_idx'),
+            model_name="chatmessage",
+            index=models.Index(
+                fields=["role", "timestamp"], name="service_cli_role_d8dd31_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='chatmessage',
-            index=models.Index(fields=['timestamp'], name='service_cli_timesta_f503ce_idx'),
+            model_name="chatmessage",
+            index=models.Index(
+                fields=["timestamp"], name="service_cli_timesta_f503ce_idx"
+            ),
         ),
     ]

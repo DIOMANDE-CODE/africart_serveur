@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0029_alter_alertproduit_produit_and_more'),
-        ('recommandations', '0001_initial'),
+        ("produits", "0029_alter_alertproduit_produit_and_more"),
+        ("recommandations", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recommandation',
-            name='produit_source',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='recommandations_source', to='produits.produit'),
+            model_name="recommandation",
+            name="produit_source",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="recommandations_source",
+                to="produits.produit",
+            ),
         ),
     ]

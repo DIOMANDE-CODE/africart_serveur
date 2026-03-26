@@ -7,49 +7,74 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0029_alter_alertproduit_produit_and_more'),
+        ("produits", "0029_alter_alertproduit_produit_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='alertproduit',
-            index=models.Index(fields=['produit'], name='produits_al_produit_2a56c6_idx'),
+            model_name="alertproduit",
+            index=models.Index(
+                fields=["produit"], name="produits_al_produit_2a56c6_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='alertproduit',
-            index=models.Index(fields=['statut_alerte', 'date_alerte'], name='produits_al_statut__c46bc1_idx'),
+            model_name="alertproduit",
+            index=models.Index(
+                fields=["statut_alerte", "date_alerte"],
+                name="produits_al_statut__c46bc1_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='categorie',
-            index=models.Index(fields=['nom_categorie', 'date_creation'], name='produits_ca_nom_cat_16fb0b_idx'),
+            model_name="categorie",
+            index=models.Index(
+                fields=["nom_categorie", "date_creation"],
+                name="produits_ca_nom_cat_16fb0b_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='categorie',
-            index=models.Index(fields=['date_creation'], name='produits_ca_date_cr_ed1c13_idx'),
+            model_name="categorie",
+            index=models.Index(
+                fields=["date_creation"], name="produits_ca_date_cr_ed1c13_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='notationproduit',
-            index=models.Index(fields=['produit', 'date_notation'], name='produits_no_produit_d16c3d_idx'),
+            model_name="notationproduit",
+            index=models.Index(
+                fields=["produit", "date_notation"],
+                name="produits_no_produit_d16c3d_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='notationproduit',
-            index=models.Index(fields=['utilisateur', 'date_notation'], name='produits_no_utilisa_eb8b09_idx'),
+            model_name="notationproduit",
+            index=models.Index(
+                fields=["utilisateur", "date_notation"],
+                name="produits_no_utilisa_eb8b09_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='produit',
-            index=models.Index(fields=['categorie_produit'], name='produits_pr_categor_b1b57a_idx'),
+            model_name="produit",
+            index=models.Index(
+                fields=["categorie_produit"], name="produits_pr_categor_b1b57a_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='produit',
-            index=models.Index(fields=['nom_produit'], name='produits_pr_nom_pro_5a9a56_idx'),
+            model_name="produit",
+            index=models.Index(
+                fields=["nom_produit"], name="produits_pr_nom_pro_5a9a56_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='produit',
-            index=models.Index(fields=['quantite_produit_disponible'], name='produits_pr_quantit_d60299_idx'),
+            model_name="produit",
+            index=models.Index(
+                fields=["quantite_produit_disponible"],
+                name="produits_pr_quantit_d60299_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='produit',
-            index=models.Index(fields=['date_creation'], name='produits_pr_date_cr_5ba7e3_idx'),
+            model_name="produit",
+            index=models.Index(
+                fields=["date_creation"], name="produits_pr_date_cr_5ba7e3_idx"
+            ),
         ),
     ]

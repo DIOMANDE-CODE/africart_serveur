@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0003_client_is_active_client_photo_profil_client'),
+        ("clients", "0003_client_is_active_client_photo_profil_client"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='password_client',
-            field=models.CharField(blank=True, max_length=250, null=True, verbose_name='mot de passe du client'),
+            model_name="client",
+            name="password_client",
+            field=models.CharField(
+                blank=True,
+                max_length=250,
+                null=True,
+                verbose_name="mot de passe du client",
+            ),
         ),
     ]

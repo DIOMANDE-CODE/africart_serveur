@@ -8,18 +8,33 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0022_rename_image_produit_vue1_compressed_produit_thumbnail_2_and_more'),
+        (
+            "produits",
+            "0022_rename_image_produit_vue1_compressed_produit_thumbnail_2_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='image_produit_2',
-            field=cloudinary.models.CloudinaryField(blank=True, default=produits.models.image_produit_par_defaut, max_length=255, null=True, verbose_name='image_produit_2'),
+            model_name="produit",
+            name="image_produit_2",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default=produits.models.image_produit_par_defaut,
+                max_length=255,
+                null=True,
+                verbose_name="image_produit_2",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='image_produit_3',
-            field=cloudinary.models.CloudinaryField(blank=True, default=produits.models.image_produit_par_defaut, max_length=255, null=True, verbose_name='image_produit_3'),
+            model_name="produit",
+            name="image_produit_3",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default=produits.models.image_produit_par_defaut,
+                max_length=255,
+                null=True,
+                verbose_name="image_produit_3",
+            ),
         ),
     ]

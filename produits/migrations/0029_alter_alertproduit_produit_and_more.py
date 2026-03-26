@@ -8,48 +8,74 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0028_remove_produit_note_produit_notationproduit'),
+        ("produits", "0028_remove_produit_note_produit_notationproduit"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='alertproduit',
-            name='produit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='produits.produit'),
+            model_name="alertproduit",
+            name="produit",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="produits.produit"
+            ),
         ),
         migrations.AlterField(
-            model_name='categorie',
-            name='description_categorie',
+            model_name="categorie",
+            name="description_categorie",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='categorie',
-            name='nom_categorie',
+            model_name="categorie",
+            name="nom_categorie",
             field=models.CharField(max_length=50, unique=True),
         ),
         migrations.AlterField(
-            model_name='categorie',
-            name='pourcentage_promo_categorie',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="categorie",
+            name="pourcentage_promo_categorie",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=5,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AlterField(
-            model_name='notationproduit',
-            name='note_produit',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(5)]),
+            model_name="notationproduit",
+            name="note_produit",
+            field=models.IntegerField(
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(5),
+                ]
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='caracteristiques_produit',
+            model_name="produit",
+            name="caracteristiques_produit",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='pourcentage_promo',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)]),
+            model_name="produit",
+            name="pourcentage_promo",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=5,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(100),
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='prix_promo_produit',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True),
+            model_name="produit",
+            name="prix_promo_produit",
+            field=models.DecimalField(
+                blank=True, decimal_places=2, max_digits=10, null=True
+            ),
         ),
     ]

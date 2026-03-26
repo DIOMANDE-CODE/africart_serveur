@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('utilisateurs', '0006_alter_utilisateur_role'),
+        ("utilisateurs", "0006_alter_utilisateur_role"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='utilisateur',
-            name='thumbnail',
-            field=models.ImageField(blank=True, editable=False, null=True, upload_to='media/photo_profil_utilisateur/thumbnails/', verbose_name='Photo Profil Miniature'),
+            model_name="utilisateur",
+            name="thumbnail",
+            field=models.ImageField(
+                blank=True,
+                editable=False,
+                null=True,
+                upload_to="media/photo_profil_utilisateur/thumbnails/",
+                verbose_name="Photo Profil Miniature",
+            ),
         ),
     ]

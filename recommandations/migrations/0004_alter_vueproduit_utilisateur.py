@@ -8,14 +8,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recommandations', '0003_alter_vueproduit_utilisateur'),
+        ("recommandations", "0003_alter_vueproduit_utilisateur"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='vueproduit',
-            name='utilisateur',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='vues_utilisateur', to=settings.AUTH_USER_MODEL),
+            model_name="vueproduit",
+            name="utilisateur",
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="vues_utilisateur",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

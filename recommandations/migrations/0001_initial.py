@@ -11,41 +11,125 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('produits', '0029_alter_alertproduit_produit_and_more'),
+        ("produits", "0029_alter_alertproduit_produit_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Recommandation',
+            name="Recommandation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifiant_recommandation', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('type_recommandation', models.CharField(choices=[('best_sellers', 'Meilleures ventes'), ('similar_categorie', 'Similaire par catégorie'), ('co_achat', 'Co-achat (complémentaire)'), ('personnalise', 'Personnalisé')], max_length=20)),
-                ('score', models.FloatField(default=0.0)),
-                ('date_calcul', models.DateTimeField(auto_now_add=True)),
-                ('produit_recommande', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recommandations_recommande', to='produits.produit')),
-                ('produit_source', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='recommandations_source', to='produits.produit')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifiant_recommandation",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                (
+                    "type_recommandation",
+                    models.CharField(
+                        choices=[
+                            ("best_sellers", "Meilleures ventes"),
+                            ("similar_categorie", "Similaire par catégorie"),
+                            ("co_achat", "Co-achat (complémentaire)"),
+                            ("personnalise", "Personnalisé"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("score", models.FloatField(default=0.0)),
+                ("date_calcul", models.DateTimeField(auto_now_add=True)),
+                (
+                    "produit_recommande",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="recommandations_recommande",
+                        to="produits.produit",
+                    ),
+                ),
+                (
+                    "produit_source",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="recommandations_source",
+                        to="produits.produit",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-score'],
-                'indexes': [models.Index(fields=['produit_source', 'type_recommandation', '-score'], name='recommandat_produit_f6076f_idx'), models.Index(fields=['type_recommandation', '-score'], name='recommandat_type_re_f618e8_idx')],
-                'unique_together': {('produit_source', 'produit_recommande', 'type_recommandation')},
+                "ordering": ["-score"],
+                "indexes": [
+                    models.Index(
+                        fields=["produit_source", "type_recommandation", "-score"],
+                        name="recommandat_produit_f6076f_idx",
+                    ),
+                    models.Index(
+                        fields=["type_recommandation", "-score"],
+                        name="recommandat_type_re_f618e8_idx",
+                    ),
+                ],
+                "unique_together": {
+                    ("produit_source", "produit_recommande", "type_recommandation")
+                },
             },
         ),
         migrations.CreateModel(
-            name='VueProduit',
+            name="VueProduit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifiant_vue', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('session_key', models.CharField(blank=True, max_length=100, null=True)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('produit', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vues_produit', to='produits.produit')),
-                ('utilisateur', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vues_utilisateur', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifiant_vue",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                (
+                    "session_key",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "produit",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vues_produit",
+                        to="produits.produit",
+                    ),
+                ),
+                (
+                    "utilisateur",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vues_utilisateur",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-timestamp'],
-                'indexes': [models.Index(fields=['produit', 'timestamp'], name='recommandat_produit_21088f_idx'), models.Index(fields=['utilisateur', 'timestamp'], name='recommandat_utilisa_8eb531_idx')],
+                "ordering": ["-timestamp"],
+                "indexes": [
+                    models.Index(
+                        fields=["produit", "timestamp"],
+                        name="recommandat_produit_21088f_idx",
+                    ),
+                    models.Index(
+                        fields=["utilisateur", "timestamp"],
+                        name="recommandat_utilisa_8eb531_idx",
+                    ),
+                ],
             },
         ),
     ]

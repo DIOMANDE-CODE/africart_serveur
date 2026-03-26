@@ -7,18 +7,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0025_produit_note_produit_produit_pourcentage_promo_and_more'),
+        ("produits", "0025_produit_note_produit_produit_pourcentage_promo_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='categorie',
-            name='pourcentage_promo_categorie',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="categorie",
+            name="pourcentage_promo_categorie",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=5,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AddField(
-            model_name='categorie',
-            name='prix_promo_categorie',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=10, null=True, validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="categorie",
+            name="prix_promo_categorie",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=10,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
     ]

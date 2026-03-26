@@ -14,9 +14,10 @@ from pathlib import Path
 import os
 from decouple import config, Csv
 from dotenv import load_dotenv
+
 load_dotenv()
 
-version='1.0.2'
+version = "1.0.2"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,88 +30,84 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # En production, définir SECRET_KEY via les variables d'environnement.
 SECRET_KEY = config(
     "SECRET_KEY",
-    default='django-insecure-q9md!#_b8)rl(qie9dfn-(q=v%q4e!(x@q7+*q-4q0q%b!tes#'
+    default="django-insecure-q9md!#_b8)rl(qie9dfn-(q=v%q4e!(x@q7+*q-4q0q%b!tes#",
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
-    
+
 ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'graphene_django',
-
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "graphene_django",
     # liste des applications
-    'authentification',
-    'clients',
-    'commandes',
-    'produits',
-    'utilisateurs',
-    'ventes',
-    'statistiques',
-    'service_client',
-    'recommandations',
-
+    "authentification",
+    "clients",
+    "commandes",
+    "produits",
+    "utilisateurs",
+    "ventes",
+    "statistiques",
+    "service_client",
+    "recommandations",
     # CDN Cloudinary
-    'cloudinary',
-    'cloudinary_storage',
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'africart_serveur.urls'
+ROOT_URLCONF = "africart_serveur.urls"
 
 # SCHEMIN du schema GraphQL
-GRAPHENE = {
-    'SCHEMA': 'africart_serveur.schema.schema'
-}
+GRAPHENE = {"SCHEMA": "africart_serveur.schema.schema"}
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'africart_serveur.wsgi.application'
+WSGI_APPLICATION = "africart_serveur.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -120,16 +117,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -137,9 +134,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = "fr-fr"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -150,38 +147,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "static/"
 
 # Configuration pour les media
-MEDIA_URL ='/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Definir Utilisateur comme modèle user par defaut
-AUTH_USER_MODEL = 'utilisateurs.Utilisateur'
+AUTH_USER_MODEL = "utilisateurs.Utilisateur"
 
 # Configuration REST_FRAMEWORK
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'utilisateurs.auth.CookieTokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "utilisateurs.auth.CookieTokenAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '300/min',
-        'user': '500/min'
-    },
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_THROTTLE_RATES": {"anon": "300/min", "user": "500/min"},
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 CACHES = {
@@ -192,12 +186,12 @@ CACHES = {
 }
 
 # Sessions : stockage explicite en base de données pour un partage correct entre workers
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 
 # Configuration CORS
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS",cast=Csv())
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 CORS_ALLOW_CREDENTIALS = True
 
@@ -209,31 +203,29 @@ CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = "Lax"
 
 
-
-
 # Configuration de la documentation avec drf-spectacular
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Mon serveur de Africart',
-    'VERSION': '1.0.0',
-    'DESCRIPTION': 'Documentation officielle du serveur.',
+    "TITLE": "Mon serveur de Africart",
+    "VERSION": "1.0.0",
+    "DESCRIPTION": "Documentation officielle du serveur.",
 }
 
 # Compression et cache automatique des fichiers statiques
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Configuration du stockage des fichiers médias avec Cloudinary
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # Configuration Cloudinary
-CLOUDINARY_STORAGE = { 
-    'CLOUD_NAME': config("CLOUDINARY_CLOUD_NAME", default=""), 
-    'API_KEY': config("CLOUDINARY_API_KEY", default=""), 
-    'API_SECRET': config("CLOUDINARY_API_SECRET", default=""), 
-    }
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY": config("CLOUDINARY_API_KEY", default=""),
+    "API_SECRET": config("CLOUDINARY_API_SECRET", default=""),
+}
 
 # Configuration de l'authentification pour permettre la connexion par email ou numéro de téléphone
 AUTHENTICATION_BACKENDS = [
     "utilisateurs.backend.CustomAuthenticationBackend",  # notre backend custom
-    "django.contrib.auth.backends.ModelBackend",      # fallback
+    "django.contrib.auth.backends.ModelBackend",  # fallback
 ]

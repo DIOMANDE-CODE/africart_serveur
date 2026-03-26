@@ -7,18 +7,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0026_categorie_pourcentage_promo_categorie_and_more'),
+        ("produits", "0026_categorie_pourcentage_promo_categorie_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='categorie',
-            name='pourcentage_promo_categorie',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=3, null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='pourcentage de promotion catégorie (ex: 20%)'),
+            model_name="categorie",
+            name="pourcentage_promo_categorie",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=3,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="pourcentage de promotion catégorie (ex: 20%)",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='pourcentage_promo',
-            field=models.DecimalField(blank=True, decimal_places=2, default=0, max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='pourcentage de promotion (ex: 20%)'),
+            model_name="produit",
+            name="pourcentage_promo",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                default=0,
+                max_digits=5,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="pourcentage de promotion (ex: 20%)",
+            ),
         ),
     ]

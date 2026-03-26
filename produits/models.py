@@ -12,34 +12,41 @@ from utilisateurs.models import Utilisateur
 
 
 def image_produit_par_defaut():
-    return 'https://res.cloudinary.com/darkqhocp/image/upload/v1770326117/Logo_moderne_d_AfriCart_en_couleurs_vives_kydtpd.png'
+    return "https://res.cloudinary.com/darkqhocp/image/upload/v1770326117/Logo_moderne_d_AfriCart_en_couleurs_vives_kydtpd.png"
 
 
 class Categorie(models.Model):
-    identifiant_categorie = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    identifiant_categorie = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True
+    )
     nom_categorie = models.CharField(max_length=50, unique=True)
     description_categorie = models.TextField(null=True, blank=True)
 
     pourcentage_promo_categorie = models.DecimalField(
-        max_digits=5, decimal_places=2,
+        max_digits=5,
+        decimal_places=2,
         validators=[MinValueValidator(0)],
-        default=0, blank=True, null=True
+        default=0,
+        blank=True,
+        null=True,
     )
 
     prix_promo_categorie = models.DecimalField(
-        max_digits=10, decimal_places=2,
+        max_digits=10,
+        decimal_places=2,
         validators=[MinValueValidator(0)],
-        default=0, blank=True, null=True
+        default=0,
+        blank=True,
+        null=True,
     )
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         indexes = [
-            models.Index(fields=['nom_categorie', 'date_creation']),
-            models.Index(fields=['date_creation']),
+            models.Index(fields=["nom_categorie", "date_creation"]),
+            models.Index(fields=["date_creation"]),
         ]
 
     def __str__(self):
@@ -47,65 +54,75 @@ class Categorie(models.Model):
 
 
 class Produit(models.Model):
-    identifiant_produit = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    identifiant_produit = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True
+    )
     nom_produit = models.CharField(max_length=50, unique=True)
 
     image_produit = CloudinaryField(
-        'image_produit',
-        folder='mes_projets/AfriCart/produits/images/',
+        "image_produit",
+        folder="mes_projets/AfriCart/produits/images/",
         default=image_produit_par_defaut,
         blank=True,
-        null=True
+        null=True,
     )
     thumbnail = models.URLField(blank=True, null=True, editable=False)
 
     image_produit_2 = CloudinaryField(
-        'image_produit_2',
-        folder='mes_projets/AfriCart/produits/images/',
+        "image_produit_2",
+        folder="mes_projets/AfriCart/produits/images/",
         default=image_produit_par_defaut,
         blank=True,
-        null=True
+        null=True,
     )
     thumbnail_2 = models.URLField(blank=True, null=True, editable=False)
 
     image_produit_3 = CloudinaryField(
-        'image_produit_3',
-        folder='mes_projets/AfriCart/produits/images/',
+        "image_produit_3",
+        folder="mes_projets/AfriCart/produits/images/",
         default=image_produit_par_defaut,
         blank=True,
-        null=True
+        null=True,
     )
     thumbnail_3 = models.URLField(blank=True, null=True, editable=False)
 
-    categorie_produit = models.ForeignKey(Categorie, on_delete=models.CASCADE, related_name="produits")
+    categorie_produit = models.ForeignKey(
+        Categorie, on_delete=models.CASCADE, related_name="produits"
+    )
 
     description_produit = models.TextField(blank=True, null=True)
     caracteristiques_produit = models.TextField(blank=True, null=True)
 
-    prix_unitaire_produit = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    prix_promo_produit = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    prix_unitaire_produit = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+    )
+    prix_promo_produit = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True
+    )
 
     quantite_produit_disponible = models.IntegerField(validators=[MinValueValidator(0)])
     seuil_alerte_produit = models.IntegerField(validators=[MinValueValidator(0)])
 
     pourcentage_promo = models.DecimalField(
-        max_digits=5, decimal_places=2,
+        max_digits=5,
+        decimal_places=2,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        default=0, blank=True, null=True
+        default=0,
+        blank=True,
+        null=True,
     )
 
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
-
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         indexes = [
-            models.Index(fields=['categorie_produit']),
-            models.Index(fields=['nom_produit']),
-            models.Index(fields=['quantite_produit_disponible']),
-            models.Index(fields=['date_creation']),
+            models.Index(fields=["categorie_produit"]),
+            models.Index(fields=["nom_produit"]),
+            models.Index(fields=["quantite_produit_disponible"]),
+            models.Index(fields=["date_creation"]),
         ]
-
 
     def __str__(self):
         return self.nom_produit
@@ -129,7 +146,7 @@ class Produit(models.Model):
             result = cloudinary.uploader.upload(
                 thumb_io.getvalue(),
                 folder="mes_projets/AfriCart/produits/compressed/",
-                public_id=public_id
+                public_id=public_id,
             )
             return result.get("secure_url")
         except Exception:
@@ -144,7 +161,9 @@ class Produit(models.Model):
 
         # calcul promo SAFE (sans save interne)
         if self.pourcentage_promo and self.pourcentage_promo > 0:
-            self.prix_promo_produit = self.prix_unitaire_produit * (1 - self.pourcentage_promo / 100)
+            self.prix_promo_produit = self.prix_unitaire_produit * (
+                1 - self.pourcentage_promo / 100
+            )
         else:
             self.prix_promo_produit = None
 
@@ -154,17 +173,34 @@ class Produit(models.Model):
         for field, thumb, prefix in [
             ("image_produit", "thumbnail", "thumb_"),
             ("image_produit_2", "thumbnail_2", "thumb2_"),
-            ("image_produit_3", "thumbnail_3", "thumb3_")
+            ("image_produit_3", "thumbnail_3", "thumb3_"),
         ]:
             image = getattr(self, field)
             image_url = image if isinstance(image, str) else getattr(image, "url", None)
 
-            old_url = getattr(old_instance, field).url if old_instance and getattr(old_instance, field) else None
+            old_url = (
+                getattr(old_instance, field).url
+                if old_instance and getattr(old_instance, field)
+                else None
+            )
 
             if image_url and (not getattr(self, thumb) or image_url != old_url):
-                setattr(self, thumb, self.compress_and_upload(image_url, f"{prefix}{self.identifiant_produit}"))
+                setattr(
+                    self,
+                    thumb,
+                    self.compress_and_upload(
+                        image_url, f"{prefix}{self.identifiant_produit}"
+                    ),
+                )
 
-        super().save(update_fields=["thumbnail", "thumbnail_2", "thumbnail_3", "prix_promo_produit"])
+        super().save(
+            update_fields=[
+                "thumbnail",
+                "thumbnail_2",
+                "thumbnail_3",
+                "prix_promo_produit",
+            ]
+        )
 
         # ---------- Alert logic: create or update AlertProduit ----------
         try:
@@ -181,18 +217,22 @@ class Produit(models.Model):
                     AlertProduit.objects.create(
                         produit=self,
                         statut_alerte=True,
-                        message_alerte=f"Stock faible: {self.quantite_produit_disponible} <= {self.seuil_alerte_produit}"
+                        message_alerte=f"Stock faible: {self.quantite_produit_disponible} <= {self.seuil_alerte_produit}",
                     )
             else:
                 # If stock has been replenished above threshold, deactivate any active alerts
-                AlertProduit.objects.filter(produit=self, statut_alerte=True).update(statut_alerte=False)
+                AlertProduit.objects.filter(produit=self, statut_alerte=True).update(
+                    statut_alerte=False
+                )
         except Exception:
             # Do not break saving on alert errors; log could be added later
             pass
 
 
 class AlertProduit(models.Model):
-    identifiant_alerte = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    identifiant_alerte = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True
+    )
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     message_alerte = models.CharField(max_length=50, null=True, blank=True)
     statut_alerte = models.BooleanField(default=True)
@@ -200,19 +240,24 @@ class AlertProduit(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['produit']),
-            models.Index(fields=['statut_alerte', 'date_alerte']),
+            models.Index(fields=["produit"]),
+            models.Index(fields=["statut_alerte", "date_alerte"]),
         ]
-
 
     def __str__(self):
         return f"Alerte pour {self.produit.nom_produit}"
 
 
 class NotationProduit(models.Model):
-    identifiant_notation = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, related_name='notations_produit')
-    utilisateur = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, related_name='notations_utilisateur')
+    identifiant_notation = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True
+    )
+    produit = models.ForeignKey(
+        Produit, on_delete=models.CASCADE, related_name="notations_produit"
+    )
+    utilisateur = models.ForeignKey(
+        Utilisateur, on_delete=models.CASCADE, related_name="notations_utilisateur"
+    )
 
     note_produit = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)]
@@ -221,12 +266,11 @@ class NotationProduit(models.Model):
     date_notation = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('produit', 'utilisateur')
+        unique_together = ("produit", "utilisateur")
         indexes = [
-            models.Index(fields=['produit', 'date_notation']),
-            models.Index(fields=['utilisateur', 'date_notation']),
+            models.Index(fields=["produit", "date_notation"]),
+            models.Index(fields=["utilisateur", "date_notation"]),
         ]
-
 
     def __str__(self):
         return f"Notation {self.note_produit} pour {self.produit.nom_produit}"

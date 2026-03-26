@@ -7,18 +7,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('utilisateurs', '0001_initial'),
+        ("utilisateurs", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='utilisateur',
-            name='photo_profil_utilisateur',
-            field=models.ImageField(blank=True, default=utilisateurs.models.photo_profil_par_defaut, null=True, upload_to='photo_profil_utilisateur', verbose_name='Photo de profil utilisateur'),
+            model_name="utilisateur",
+            name="photo_profil_utilisateur",
+            field=models.ImageField(
+                blank=True,
+                default=utilisateurs.models.photo_profil_par_defaut,
+                null=True,
+                upload_to="photo_profil_utilisateur",
+                verbose_name="Photo de profil utilisateur",
+            ),
         ),
         migrations.AlterField(
-            model_name='utilisateur',
-            name='role',
-            field=models.CharField(choices=[('admin', 'admin'), ('gerant', 'gerant'), ('vendeur', 'vendeur')], default='vendeur', max_length=10, verbose_name='role utilisateur'),
+            model_name="utilisateur",
+            name="role",
+            field=models.CharField(
+                choices=[
+                    ("admin", "admin"),
+                    ("gerant", "gerant"),
+                    ("vendeur", "vendeur"),
+                ],
+                default="vendeur",
+                max_length=10,
+                verbose_name="role utilisateur",
+            ),
         ),
     ]

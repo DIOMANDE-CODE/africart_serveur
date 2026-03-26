@@ -1,18 +1,22 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Commande, ZoneLivraison
 from datetime import date
 from rest_framework.pagination import LimitOffsetPagination
-from .serializers import CommandeCreateSerializer, VoirCommandeSerializer, CommandeUpdateSerializer, ZoneLivraisonSerializer
+from .serializers import (
+    CommandeCreateSerializer,
+    VoirCommandeSerializer,
+    CommandeUpdateSerializer,
+    ZoneLivraisonSerializer,
+)
 from permissions import EstAdministrateur, EstGerant, EstClient, EstVendeur
-
 
 # Create your views here.
 
+
 # Fonction de création de nouvelle commande
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([EstClient | EstGerant | EstAdministrateur])
 def creer_commande(request):
     """
@@ -23,274 +27,313 @@ def creer_commande(request):
     data = request.data
 
     # Creation de la commande
-    try :
-        serializer = CommandeCreateSerializer(data=data, context={'request': request})
+    try:
+        serializer = CommandeCreateSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             commande = serializer.save()
-            return Response({"message": "Commande créée avec succès", 
-            "reference_commande": commande.identifiant_commande}, status=status.HTTP_201_CREATED)
-        return Response({
-            "success":False,
-            "errors":serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "message": "Commande créée avec succès",
+                    "reference_commande": commande.identifiant_commande,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            {"success": False, "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         print(Exception)
-        return Response({
-            "success":False,
-            "errors":"Erreur interne du serveur",
-            "message":str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
 # Liste des commandes
-@api_view(['GET'])
+
+
+@api_view(["GET"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def liste_commande(request):
     try:
-        # commandes = Commande.objects.filter(date_creation__date=date.today()).order_by('-date_creation')
-        commandes = Commande.objects.all().order_by('-date_creation')
-        
-        limit = request.GET.get("limit","10")
-        offset = request.GET.get("offset","0")
+        commandes = Commande.objects.filter(date_creation__date=date.today()).order_by(
+            "-date_creation"
+        )
+        # commandes = Commande.objects.all().order_by('-date_creation')
+
+        # Pagination parameters are handled by LimitOffsetPagination
 
         # Pagination
         pagination = LimitOffsetPagination()
         pagination.default_limit = 10
-        commandes_page = pagination.paginate_queryset(commandes,request)
+        commandes_page = pagination.paginate_queryset(commandes, request)
         serializer = VoirCommandeSerializer(commandes_page, many=True)
         pagination_response = pagination.get_paginated_response(serializer.data)
         response_data = pagination_response.data
-        return Response({
-            "success":True,
-            "data":response_data,
-        }, status=status.HTTP_200_OK)
-    except Exception as e :
-        return Response({
-            "success":False,
-            "errors":"Erreur interne du serveur",
-            "message":str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        return Response(
+            {
+                "success": True,
+                "data": response_data,
+            },
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
 
 # Fonction pour lister les commandes par vendeur
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([EstVendeur])
 def liste_commande_par_vendeur(request):
     user = request.user
 
     if user.role != "vendeur":
-        return Response({
-            "success":False,
-            "errors":"Accès refusé. Cette vue est réservée aux vendeurs."
-        }, status=403)
+        return Response(
+            {
+                "success": False,
+                "errors": "Accès refusé. Cette vue est réservée aux vendeurs.",
+            },
+            status=403,
+        )
     else:
         try:
-            commandes = Commande.objects.filter(utilisateur=user).order_by('-date_commande')
+            # commandes = Commande.objects.filter(utilisateur=user).order_by('-date_commande')
 
-            # commandes = Commande.objects.filter(utilisateur=user,date_commande__date=date.today()).order_by('-date_commande')
+            commandes = Commande.objects.filter(
+                utilisateur=user, date_commande__date=date.today()
+            ).order_by("-date_commande")
 
-            limit = request.GET.get("limit","10")
-            offset = request.GET.get("offset","0")
+            # Pagination parameters are handled by LimitOffsetPagination
 
             # Pagination
             pagination = LimitOffsetPagination()
             pagination.default_limit = 10
-            commandes_page = pagination.paginate_queryset(commandes,request)
+            commandes_page = pagination.paginate_queryset(commandes, request)
             serializer = VoirCommandeSerializer(commandes_page, many=True)
             pagination_response = pagination.get_paginated_response(serializer.data)
             response_data = pagination_response.data
-            return Response({
-                "success":True,
-                "data":response_data,
-            }, status=status.HTTP_200_OK)
-        except Exception as e :
-            return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+            return Response(
+                {
+                    "success": True,
+                    "data": response_data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {
+                    "success": False,
+                    "errors": "Erreur interne du serveur",
+                    "message": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 # Fonction pour voir les details d'une commande
-@api_view(['GET'])
+
+
+@api_view(["GET"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur | EstClient])
 def detail_commande(request, commande_id):
     try:
-        commande = Commande.objects.get(identifiant_commande = commande_id)
-    except Commande.DoesNotExist:  
-        return Response({'success': False, 'message': 'Commande non trouvée'}, status=status.HTTP_404_NOT_FOUND)
-    
+        commande = Commande.objects.get(identifiant_commande=commande_id)
+    except Commande.DoesNotExist:
+        return Response(
+            {"success": False, "message": "Commande non trouvée"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
     try:
         serializer = VoirCommandeSerializer(commande)
-        return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
-    except Exception as e : 
-        return Response({
-            "success":False,
-            "errors":"Erreur interne du serveur",
-            "message":str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        return Response(
+            {"success": True, "data": serializer.data}, status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
 # Fonction pour valider la commande
-@api_view(['PUT'])
+
+
+@api_view(["PUT"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def valider_commande(request, commande_id):
     user = request.user
     if user.role != "vendeur":
-        return Response({
-            "success": False,
-            "errors": "Accès refusé. Cette vue est réservée aux vendeurs."
-        }, status=403)
-    
+        return Response(
+            {
+                "success": False,
+                "errors": "Accès refusé. Cette vue est réservée aux vendeurs.",
+            },
+            status=403,
+        )
+
     try:
         commande = Commande.objects.get(identifiant_commande=commande_id)
     except Commande.DoesNotExist:
-        return Response({
-            "success": False,
-            "errors": "Commande non trouvée."
-        }, status=404)
-    
-    try:
-        serializer = CommandeUpdateSerializer(
-            commande,
-            data=request.data,
-            partial=True
+        return Response(
+            {"success": False, "errors": "Commande non trouvée."}, status=404
         )
+
+    try:
+        serializer = CommandeUpdateSerializer(commande, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "success":True,
-                "data":serializer.data
-            }, status=200)
-        return Response({
-            "success":False,
-            "errors":serializer.errors
-        }, status=400)
-    except Exception as e :
-            return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+            return Response({"success": True, "data": serializer.data}, status=200)
+        return Response({"success": False, "errors": serializer.errors}, status=400)
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # Fonction pour valider livraison de la commande
-@api_view(['PUT'])
+@api_view(["PUT"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur])
 def livrer_commande(request, commande_id):
     user = request.user
     if user.role != "vendeur":
-        return Response({
-            "success": False,
-            "errors": "Accès refusé. Cette vue est réservée aux vendeurs."
-        }, status=403)
-    
+        return Response(
+            {
+                "success": False,
+                "errors": "Accès refusé. Cette vue est réservée aux vendeurs.",
+            },
+            status=403,
+        )
+
     try:
         commande = Commande.objects.get(identifiant_commande=commande_id)
     except Commande.DoesNotExist:
-        return Response({
-            "success": False,
-            "errors": "Commande non trouvée."
-        }, status=404)
-    
-    try:
-        serializer = CommandeUpdateSerializer(
-            commande,
-            data=request.data,
-            partial=True
+        return Response(
+            {"success": False, "errors": "Commande non trouvée."}, status=404
         )
+
+    try:
+        serializer = CommandeUpdateSerializer(commande, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "success":True,
-                "data":serializer.data
-            }, status=200)
-        return Response({
-            "success":False,
-            "errors":serializer.errors
-        }, status=400)
-    except Exception as e :
-            return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+            return Response({"success": True, "data": serializer.data}, status=200)
+        return Response({"success": False, "errors": serializer.errors}, status=400)
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
-@api_view(['PUT'])
+@api_view(["PUT"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur])
-def annuler_commande(request,commande_id):
+def annuler_commande(request, commande_id):
     user = request.user
     if user.role != "vendeur":
-        return Response({
-            "success": False,
-            "errors": "Accès refusé. Cette vue est réservée aux vendeurs."
-        }, status=403)
-    
+        return Response(
+            {
+                "success": False,
+                "errors": "Accès refusé. Cette vue est réservée aux vendeurs.",
+            },
+            status=403,
+        )
+
     try:
         commande = Commande.objects.get(identifiant_commande=commande_id)
         commande.is_active = False
     except Commande.DoesNotExist:
-        return Response({
-            "success": False,
-            "errors": "Commande non trouvée."
-        }, status=404)
-    
-    try:
-        serializer = CommandeUpdateSerializer(
-            commande,
-            data=request.data,
-            partial=True
+        return Response(
+            {"success": False, "errors": "Commande non trouvée."}, status=404
         )
+
+    try:
+        serializer = CommandeUpdateSerializer(commande, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "success":True,
-                "data":serializer.data
-            }, status=200)
-        return Response({
-            "success":False,
-            "errors":serializer.errors
-        }, status=400)
-    except Exception as e :
-            return Response({
-                "success":False,
-                "errors":"Erreur interne du serveur",
-                "message":str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
-    
+            return Response({"success": True, "data": serializer.data}, status=200)
+        return Response({"success": False, "errors": serializer.errors}, status=400)
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
 
 # Voir les commandes du client connectés
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([EstClient | EstGerant | EstAdministrateur])
-def liste_commande_client(request,email_client):
+def liste_commande_client(request, email_client):
     try:
-        commande = Commande.objects.filter(client__email_client=email_client).order_by("-date_commande")
-    except Commande.DoesNotExist:  
-        return Response({'success': False, 'message': 'Commande non trouvée'}, status=status.HTTP_404_NOT_FOUND)
-    
+        commande = Commande.objects.filter(client__email_client=email_client).order_by(
+            "-date_commande"
+        )
+    except Commande.DoesNotExist:
+        return Response(
+            {"success": False, "message": "Commande non trouvée"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
     try:
         serializer = VoirCommandeSerializer(commande, many=True)
-        return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
-    except Exception as e :
-        return Response({
-            "success":False,
-            "errors":"Erreur interne du serveur",
-            "message":str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(
+            {"success": True, "data": serializer.data}, status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        return Response(
+            {
+                "success": False,
+                "errors": "Erreur interne du serveur",
+                "message": str(e),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 # Voir Zone Livraison
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([EstVendeur | EstGerant | EstAdministrateur | EstClient])
 def voir_frais_livraison_zone(request):
     zones = ZoneLivraison.objects.all()
     print(f"DEBUG: Nombre de zones trouvées : {zones.count()}")
     for z in zones:
-        print(f"Zone: {z.nom_zone}, frais: {z.frais_livraison}, id: {z.identifiant_zone}")
+        print(
+            f"Zone: {z.nom_zone}, frais: {z.frais_livraison}, id: {z.identifiant_zone}"
+        )
     serializer = ZoneLivraisonSerializer(zones, many=True)
     print(f"DEBUG: Données sérialisées : {serializer.data}")
-    return Response({
-        'success': True,
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"success": True, "data": serializer.data}, status=status.HTTP_200_OK
+    )

@@ -6,15 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0009_zonelivraison_attributioncommande_date_mise_a_jour_and_more'),
+        (
+            "commandes",
+            "0009_zonelivraison_attributioncommande_date_mise_a_jour_and_more",
+        ),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='commande',
-            name='zone',
+            model_name="commande",
+            name="zone",
         ),
         migrations.DeleteModel(
-            name='ZoneLivraison',
+            name="ZoneLivraison",
         ),
     ]

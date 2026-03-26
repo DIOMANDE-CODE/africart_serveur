@@ -7,13 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0001_initial'),
+        ("clients", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='client',
-            name='numero_telephone_client',
-            field=models.CharField(blank=True, max_length=15, null=True, unique=True, validators=[django.core.validators.RegexValidator(message='Veuillez entrer un numéro ivoirien valide (ex: +2250102030405 ou 0102030405).', regex='^(?:\\+225|00225)?(01|05|07|25|27)\\d{8}$')], verbose_name='Numero de téléphone'),
+            model_name="client",
+            name="numero_telephone_client",
+            field=models.CharField(
+                blank=True,
+                max_length=15,
+                null=True,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Veuillez entrer un numéro ivoirien valide (ex: +2250102030405 ou 0102030405).",
+                        regex="^(?:\\+225|00225)?(01|05|07|25|27)\\d{8}$",
+                    )
+                ],
+                verbose_name="Numero de téléphone",
+            ),
         ),
     ]

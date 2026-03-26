@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0016_remove_client_is_active'),
+        ("clients", "0016_remove_client_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='email_client',
-            field=models.EmailField(blank=True, max_length=50, null=True, unique=True, verbose_name='Email client'),
+            model_name="client",
+            name="email_client",
+            field=models.EmailField(
+                blank=True,
+                max_length=50,
+                null=True,
+                unique=True,
+                verbose_name="Email client",
+            ),
         ),
     ]

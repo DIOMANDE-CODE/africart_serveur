@@ -7,13 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0003_rename_quantite_disponible_produit_produit_quantite_produit_disponible'),
+        (
+            "produits",
+            "0003_rename_quantite_disponible_produit_produit_quantite_produit_disponible",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='categorie_produit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='produits.categorie', verbose_name='Categorie du produit'),
+            model_name="produit",
+            name="categorie_produit",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="categories",
+                to="produits.categorie",
+                verbose_name="Categorie du produit",
+            ),
         ),
     ]

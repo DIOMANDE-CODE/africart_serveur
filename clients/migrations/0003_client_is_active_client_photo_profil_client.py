@@ -7,18 +7,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0002_alter_client_numero_telephone_client'),
+        ("clients", "0002_alter_client_numero_telephone_client"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='is_active',
+            model_name="client",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='client',
-            name='photo_profil_client',
-            field=models.ImageField(blank=True, default=clients.models.photo_profil_par_defaut, null=True, upload_to='media/photo_profil_client/', verbose_name='Photo de profil client'),
+            model_name="client",
+            name="photo_profil_client",
+            field=models.ImageField(
+                blank=True,
+                default=clients.models.photo_profil_par_defaut,
+                null=True,
+                upload_to="media/photo_profil_client/",
+                verbose_name="Photo de profil client",
+            ),
         ),
     ]

@@ -7,13 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0006_alter_produit_image_produit'),
+        ("produits", "0006_alter_produit_image_produit"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='quantite_produit_disponible',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0)], verbose_name='quantite produit disponible'),
+            model_name="produit",
+            name="quantite_produit_disponible",
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="quantite produit disponible",
+            ),
         ),
     ]

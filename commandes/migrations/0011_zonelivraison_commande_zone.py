@@ -8,27 +8,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0010_remove_commande_zone_delete_zonelivraison'),
+        ("commandes", "0010_remove_commande_zone_delete_zonelivraison"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ZoneLivraison',
+            name="ZoneLivraison",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifiant_zone', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('nom_zone', models.CharField(max_length=50, unique=True)),
-                ('frais_livraison', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-                ('latitude', models.FloatField()),
-                ('longitude', models.FloatField()),
-                ('rayon_metres', models.PositiveIntegerField()),
-                ('date_creation', models.DateTimeField(auto_now_add=True)),
-                ('date_modification', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifiant_zone",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("nom_zone", models.CharField(max_length=50, unique=True)),
+                (
+                    "frais_livraison",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                ),
+                ("latitude", models.FloatField()),
+                ("longitude", models.FloatField()),
+                ("rayon_metres", models.PositiveIntegerField()),
+                ("date_creation", models.DateTimeField(auto_now_add=True)),
+                ("date_modification", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.AddField(
-            model_name='commande',
-            name='zone',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='commandes', to='commandes.zonelivraison'),
+            model_name="commande",
+            name="zone",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="commandes",
+                to="commandes.zonelivraison",
+            ),
         ),
     ]

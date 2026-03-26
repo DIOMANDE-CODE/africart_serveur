@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0006_alter_client_role'),
+        ("clients", "0006_alter_client_role"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='client',
-            name='role',
-            field=models.CharField(default='client', max_length=10, verbose_name='role client'),
+            model_name="client",
+            name="role",
+            field=models.CharField(
+                default="client", max_length=10, verbose_name="role client"
+            ),
         ),
     ]

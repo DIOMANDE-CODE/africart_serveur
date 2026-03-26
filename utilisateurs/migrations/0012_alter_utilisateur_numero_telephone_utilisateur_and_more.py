@@ -8,23 +8,46 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('utilisateurs', '0011_alter_utilisateur_role'),
+        ("utilisateurs", "0011_alter_utilisateur_role"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='utilisateur',
-            name='numero_telephone_utilisateur',
-            field=models.CharField(blank=True, max_length=15, null=True, validators=[django.core.validators.RegexValidator(message='Veuillez entrer un numéro ivoirien valide (ex: +2250102030405 ou 0102030405).', regex='^(?:\\+225|00225)?(01|05|07|25|27)\\d{8}$')], verbose_name='Numéro de téléphone'),
+            model_name="utilisateur",
+            name="numero_telephone_utilisateur",
+            field=models.CharField(
+                blank=True,
+                max_length=15,
+                null=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Veuillez entrer un numéro ivoirien valide (ex: +2250102030405 ou 0102030405).",
+                        regex="^(?:\\+225|00225)?(01|05|07|25|27)\\d{8}$",
+                    )
+                ],
+                verbose_name="Numéro de téléphone",
+            ),
         ),
         migrations.AlterField(
-            model_name='utilisateur',
-            name='photo_profil_utilisateur',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='photo_profil'),
+            model_name="utilisateur",
+            name="photo_profil_utilisateur",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="photo_profil"
+            ),
         ),
         migrations.AlterField(
-            model_name='utilisateur',
-            name='role',
-            field=models.CharField(choices=[('admin', 'admin'), ('gerant', 'gerant'), ('vendeur', 'vendeur'), ('client', 'client')], default='vendeur', max_length=10, verbose_name='Rôle utilisateur'),
+            model_name="utilisateur",
+            name="role",
+            field=models.CharField(
+                choices=[
+                    ("admin", "admin"),
+                    ("gerant", "gerant"),
+                    ("vendeur", "vendeur"),
+                    ("client", "client"),
+                ],
+                default="vendeur",
+                max_length=10,
+                verbose_name="Rôle utilisateur",
+            ),
         ),
     ]

@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0011_zonelivraison_commande_zone'),
+        ("commandes", "0011_zonelivraison_commande_zone"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='commande',
-            name='latitude_client',
+            model_name="commande",
+            name="latitude_client",
             field=models.FloatField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='commande',
-            name='longitude_client',
+            model_name="commande",
+            name="longitude_client",
             field=models.FloatField(blank=True, null=True),
         ),
     ]

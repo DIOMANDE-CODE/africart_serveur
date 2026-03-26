@@ -8,25 +8,41 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0002_alter_client_numero_telephone_client'),
-        ('ventes', '0002_alter_vente_identifiant_vente'),
+        ("clients", "0002_alter_client_numero_telephone_client"),
+        ("ventes", "0002_alter_vente_identifiant_vente"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='detailvente',
-            name='vente',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='details_ventes', to='ventes.vente'),
+            model_name="detailvente",
+            name="vente",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="details_ventes",
+                to="ventes.vente",
+            ),
         ),
         migrations.AlterField(
-            model_name='vente',
-            name='client',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ventes_clients', to='clients.client'),
+            model_name="vente",
+            name="client",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="ventes_clients",
+                to="clients.client",
+            ),
         ),
         migrations.AlterField(
-            model_name='vente',
-            name='utilisateur',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ventes_utilisateurs', to=settings.AUTH_USER_MODEL),
+            model_name="vente",
+            name="utilisateur",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="ventes_utilisateurs",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

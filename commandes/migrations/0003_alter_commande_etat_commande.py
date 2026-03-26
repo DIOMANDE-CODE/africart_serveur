@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0002_attributioncommande_alter_commande_etat_commande'),
+        ("commandes", "0002_attributioncommande_alter_commande_etat_commande"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='commande',
-            name='etat_commande',
-            field=models.CharField(choices=[('en_cours', 'en_cours'), ('valide', 'valide'), ('livre', 'livre'), ('annule', 'annule')], default='en_cours', max_length=10),
+            model_name="commande",
+            name="etat_commande",
+            field=models.CharField(
+                choices=[
+                    ("en_cours", "en_cours"),
+                    ("valide", "valide"),
+                    ("livre", "livre"),
+                    ("annule", "annule"),
+                ],
+                default="en_cours",
+                max_length=10,
+            ),
         ),
     ]

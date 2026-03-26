@@ -12,40 +12,122 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('clients', '0002_alter_client_numero_telephone_client'),
-        ('produits', '0006_alter_produit_image_produit'),
+        ("clients", "0002_alter_client_numero_telephone_client"),
+        ("produits", "0006_alter_produit_image_produit"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Commande',
+            name="Commande",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifiant_commande', models.CharField(editable=False, max_length=50, unique=True)),
-                ('etat_commande', models.CharField(choices=[('en attente', 'en attente'), ('validé', 'validé'), ('livré', 'livré')], default='en attente', max_length=10)),
-                ('date_commande', models.DateTimeField(default=django.utils.timezone.now)),
-                ('total_ht', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-                ('tva', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-                ('total_ttc', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-                ('date_creation', models.DateTimeField(auto_now_add=True)),
-                ('date_modification', models.DateTimeField(auto_now=True)),
-                ('client', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='commandes_clients', to='clients.client')),
-                ('utilisateur', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='commandes_utilisateurs', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifiant_commande",
+                    models.CharField(editable=False, max_length=50, unique=True),
+                ),
+                (
+                    "etat_commande",
+                    models.CharField(
+                        choices=[
+                            ("en attente", "en attente"),
+                            ("validé", "validé"),
+                            ("livré", "livré"),
+                        ],
+                        default="en attente",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "date_commande",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                (
+                    "total_ht",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                ),
+                (
+                    "tva",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                ),
+                (
+                    "total_ttc",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                ),
+                ("date_creation", models.DateTimeField(auto_now_add=True)),
+                ("date_modification", models.DateTimeField(auto_now=True)),
+                (
+                    "client",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="commandes_clients",
+                        to="clients.client",
+                    ),
+                ),
+                (
+                    "utilisateur",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="commandes_utilisateurs",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DetailCommande',
+            name="DetailCommande",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifiant_detail_commande', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('quantite', models.PositiveIntegerField()),
-                ('prix_unitaire', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('sous_total', models.DecimalField(decimal_places=2, editable=False, max_digits=10)),
-                ('date_creation', models.DateTimeField(auto_now_add=True)),
-                ('date_modification', models.DateTimeField(auto_now=True)),
-                ('commande', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='details_commandes', to='commandes.commande')),
-                ('produit', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='details_commandes', to='produits.produit')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifiant_detail_commande",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("quantite", models.PositiveIntegerField()),
+                ("prix_unitaire", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "sous_total",
+                    models.DecimalField(
+                        decimal_places=2, editable=False, max_digits=10
+                    ),
+                ),
+                ("date_creation", models.DateTimeField(auto_now_add=True)),
+                ("date_modification", models.DateTimeField(auto_now=True)),
+                (
+                    "commande",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="details_commandes",
+                        to="commandes.commande",
+                    ),
+                ),
+                (
+                    "produit",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="details_commandes",
+                        to="produits.produit",
+                    ),
+                ),
             ],
         ),
     ]

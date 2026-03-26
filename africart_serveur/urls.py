@@ -14,8 +14,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponse
@@ -24,21 +25,20 @@ from django.views.decorators.csrf import csrf_exempt
 from .schema import schema
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('utilisateurs/', include('utilisateurs.urls')),
-    path('authentification/', include('authentification.urls')),
-    path('clients/', include('clients.urls')),
-    path('produits/', include('produits.urls')),
-    path('ventes/', include('ventes.urls')),
-    path('statistiques/', include('statistiques.urls')),
-    path('commandes/', include('commandes.urls')),
-    path('service-client/', include('service_client.urls')),
-    path('recommandations/', include('recommandations.urls')),
-    path('', lambda request: HttpResponse("Bienvenue sur AfriCart")),
-   path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
-
+    path("admin/", admin.site.urls),
+    path("utilisateurs/", include("utilisateurs.urls")),
+    path("authentification/", include("authentification.urls")),
+    path("clients/", include("clients.urls")),
+    path("produits/", include("produits.urls")),
+    path("ventes/", include("ventes.urls")),
+    path("statistiques/", include("statistiques.urls")),
+    path("commandes/", include("commandes.urls")),
+    path("service-client/", include("service_client.urls")),
+    path("recommandations/", include("recommandations.urls")),
+    path("", lambda request: HttpResponse("Bienvenue sur AfriCart")),
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
     # urls de drf-spectacular
 ]
 
-if settings.DEBUG == True:
+if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,33 +7,41 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0020_alter_produit_caracteristiques_produit'),
+        ("produits", "0020_alter_produit_caracteristiques_produit"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_vue1',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image_produit_vue1'),
+            model_name="produit",
+            name="image_produit_vue1",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image_produit_vue1"
+            ),
         ),
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_vue1_compressed',
+            model_name="produit",
+            name="image_produit_vue1_compressed",
             field=models.URLField(blank=True, editable=False, null=True),
         ),
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_vue2',
-            field=cloudinary.models.CloudinaryField(blank=True, max_length=255, null=True, verbose_name='image_produit_vue2'),
+            model_name="produit",
+            name="image_produit_vue2",
+            field=cloudinary.models.CloudinaryField(
+                blank=True, max_length=255, null=True, verbose_name="image_produit_vue2"
+            ),
         ),
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_vue2_compressed',
+            model_name="produit",
+            name="image_produit_vue2_compressed",
             field=models.URLField(blank=True, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='caracteristiques_produit',
-            field=models.TextField(blank=True, null=True, verbose_name='caractéristiques du produit (Ex: Écran, Clavier, Souris)'),
+            model_name="produit",
+            name="caracteristiques_produit",
+            field=models.TextField(
+                blank=True,
+                null=True,
+                verbose_name="caractéristiques du produit (Ex: Écran, Clavier, Souris)",
+            ),
         ),
     ]

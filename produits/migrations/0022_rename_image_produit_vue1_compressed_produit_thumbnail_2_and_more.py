@@ -8,41 +8,57 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0021_produit_image_produit_vue1_and_more'),
+        ("produits", "0021_produit_image_produit_vue1_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='produit',
-            old_name='image_produit_vue1_compressed',
-            new_name='thumbnail_2',
+            model_name="produit",
+            old_name="image_produit_vue1_compressed",
+            new_name="thumbnail_2",
         ),
         migrations.RenameField(
-            model_name='produit',
-            old_name='image_produit_vue2_compressed',
-            new_name='thumbnail_3',
+            model_name="produit",
+            old_name="image_produit_vue2_compressed",
+            new_name="thumbnail_3",
         ),
         migrations.RemoveField(
-            model_name='produit',
-            name='image_produit_vue1',
+            model_name="produit",
+            name="image_produit_vue1",
         ),
         migrations.RemoveField(
-            model_name='produit',
-            name='image_produit_vue2',
+            model_name="produit",
+            name="image_produit_vue2",
         ),
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_2',
-            field=cloudinary.models.CloudinaryField(blank=True, default=produits.models.image_produit_par_defaut, max_length=255, null=True, verbose_name='image_produit'),
+            model_name="produit",
+            name="image_produit_2",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default=produits.models.image_produit_par_defaut,
+                max_length=255,
+                null=True,
+                verbose_name="image_produit",
+            ),
         ),
         migrations.AddField(
-            model_name='produit',
-            name='image_produit_3',
-            field=cloudinary.models.CloudinaryField(blank=True, default=produits.models.image_produit_par_defaut, max_length=255, null=True, verbose_name='image_produit'),
+            model_name="produit",
+            name="image_produit_3",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default=produits.models.image_produit_par_defaut,
+                max_length=255,
+                null=True,
+                verbose_name="image_produit",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='caracteristiques_produit',
-            field=models.TextField(blank=True, null=True, verbose_name='caracteristiques du produit (Ex: Ecran, Clavier, Souris)'),
+            model_name="produit",
+            name="caracteristiques_produit",
+            field=models.TextField(
+                blank=True,
+                null=True,
+                verbose_name="caracteristiques du produit (Ex: Ecran, Clavier, Souris)",
+            ),
         ),
     ]

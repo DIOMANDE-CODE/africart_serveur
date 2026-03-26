@@ -6,18 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0010_alter_produit_thumbnail'),
+        ("produits", "0010_alter_produit_thumbnail"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='image_produit',
-            field=models.ImageField(blank=True, default='media/logo_marchePro.png', null=True, upload_to='mes_projets/MarchéPro/produits/images/', verbose_name='Image du produit'),
+            model_name="produit",
+            name="image_produit",
+            field=models.ImageField(
+                blank=True,
+                default="media/logo_marchePro.png",
+                null=True,
+                upload_to="mes_projets/MarchéPro/produits/images/",
+                verbose_name="Image du produit",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='thumbnail',
-            field=models.ImageField(blank=True, editable=False, null=True, upload_to='mes_projets/MarchéPro/produits/thumbnails/', verbose_name='Image Produit Miniature'),
+            model_name="produit",
+            name="thumbnail",
+            field=models.ImageField(
+                blank=True,
+                editable=False,
+                null=True,
+                upload_to="mes_projets/MarchéPro/produits/thumbnails/",
+                verbose_name="Image Produit Miniature",
+            ),
         ),
     ]

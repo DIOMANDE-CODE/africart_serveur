@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0004_client_password_client'),
+        ("clients", "0004_client_password_client"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='role',
-            field=models.CharField(default='vendeur', editable=False, max_length=10, verbose_name='role utilisateur'),
+            model_name="client",
+            name="role",
+            field=models.CharField(
+                default="vendeur",
+                editable=False,
+                max_length=10,
+                verbose_name="role utilisateur",
+            ),
         ),
     ]

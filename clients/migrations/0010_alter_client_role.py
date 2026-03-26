@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('clients', '0009_client_role'),
+        ("clients", "0009_client_role"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='client',
-            name='role',
-            field=models.CharField(blank=True, default='client', editable=False, max_length=10, null=True, verbose_name='role client'),
+            model_name="client",
+            name="role",
+            field=models.CharField(
+                blank=True,
+                default="client",
+                editable=False,
+                max_length=10,
+                null=True,
+                verbose_name="role client",
+            ),
         ),
     ]

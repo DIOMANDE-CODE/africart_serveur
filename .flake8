@@ -1,0 +1,9 @@
+[flake8]
+exclude = 
+    .git,
+    __pycache__,
+    africa_serveur_env,
+    migrations,
+    venv
+max-line-length = 88
+extend-ignore = E203, W503

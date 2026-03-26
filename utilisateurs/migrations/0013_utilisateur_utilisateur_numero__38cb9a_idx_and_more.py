@@ -6,25 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('utilisateurs', '0012_alter_utilisateur_numero_telephone_utilisateur_and_more'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        (
+            "utilisateurs",
+            "0012_alter_utilisateur_numero_telephone_utilisateur_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='utilisateur',
-            index=models.Index(fields=['numero_telephone_utilisateur'], name='utilisateur_numero__38cb9a_idx'),
+            model_name="utilisateur",
+            index=models.Index(
+                fields=["numero_telephone_utilisateur"],
+                name="utilisateur_numero__38cb9a_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='utilisateur',
-            index=models.Index(fields=['role', 'date_creation'], name='utilisateur_role_d21492_idx'),
+            model_name="utilisateur",
+            index=models.Index(
+                fields=["role", "date_creation"], name="utilisateur_role_d21492_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='utilisateur',
-            index=models.Index(fields=['is_active', 'date_creation'], name='utilisateur_is_acti_51358c_idx'),
+            model_name="utilisateur",
+            index=models.Index(
+                fields=["is_active", "date_creation"],
+                name="utilisateur_is_acti_51358c_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='utilisateur',
-            index=models.Index(fields=['date_creation'], name='utilisateur_date_cr_66df7f_idx'),
+            model_name="utilisateur",
+            index=models.Index(
+                fields=["date_creation"], name="utilisateur_date_cr_66df7f_idx"
+            ),
         ),
     ]

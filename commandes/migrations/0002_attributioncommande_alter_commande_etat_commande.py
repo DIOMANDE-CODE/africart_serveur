@@ -6,20 +6,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('commandes', '0001_initial'),
+        ("commandes", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AttributionCommande',
+            name="AttributionCommande",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dernier_index', models.IntegerField(default=0)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("dernier_index", models.IntegerField(default=0)),
             ],
         ),
         migrations.AlterField(
-            model_name='commande',
-            name='etat_commande',
-            field=models.CharField(choices=[('en_cours', 'en_cours'), ('validé', 'validé'), ('livré', 'livré')], default='en attente', max_length=10),
+            model_name="commande",
+            name="etat_commande",
+            field=models.CharField(
+                choices=[
+                    ("en_cours", "en_cours"),
+                    ("validé", "validé"),
+                    ("livré", "livré"),
+                ],
+                default="en attente",
+                max_length=10,
+            ),
         ),
     ]

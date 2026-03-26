@@ -8,33 +8,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('produits', '0015_alter_produit_thumbnail'),
+        ("produits", "0015_alter_produit_thumbnail"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='produit',
-            name='categorie_produit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='produits.categorie'),
+            model_name="produit",
+            name="categorie_produit",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="categories",
+                to="produits.categorie",
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='description_produit',
+            model_name="produit",
+            name="description_produit",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='prix_unitaire_produit',
-            field=models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="produit",
+            name="prix_unitaire_produit",
+            field=models.DecimalField(
+                decimal_places=2,
+                max_digits=10,
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='quantite_produit_disponible',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="produit",
+            name="quantite_produit_disponible",
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(0)]
+            ),
         ),
         migrations.AlterField(
-            model_name='produit',
-            name='seuil_alerte_produit',
-            field=models.IntegerField(validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="produit",
+            name="seuil_alerte_produit",
+            field=models.IntegerField(
+                validators=[django.core.validators.MinValueValidator(0)]
+            ),
         ),
     ]

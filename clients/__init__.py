@@ -1,1 +1,1 @@
-default_app_config = 'clients.apps.MonAppConfig'
+default_app_config = "clients.apps.MonAppConfig"
