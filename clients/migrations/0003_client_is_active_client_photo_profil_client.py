@@ -25,6 +25,7 @@ class Migration(migrations.Migration):
                 null=True,
                 upload_to="media/photo_profil_client/",
                 verbose_name="Photo de profil client",
+                max_length=500,
             ),
         ),
     ]
