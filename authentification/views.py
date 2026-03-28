@@ -115,7 +115,7 @@ def login_token(request):
         )
 
     try:
-        user = authenticate(username=email, password=password)
+        user = authenticate(request=request, username=email, password=password)
 
         if user:
             token, _ = Token.objects.get_or_create(user=user)
