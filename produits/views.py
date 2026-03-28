@@ -580,7 +580,6 @@ def alertes_actives(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
-# Fonction pour la notation des produits
 
 # Fonction pour noter un produit
 @api_view(["POST"])

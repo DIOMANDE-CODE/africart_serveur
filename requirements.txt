@@ -13,8 +13,11 @@ colorama==0.4.6
 cryptography==46.0.5
 distro==1.9.0
 Django==5.2.7
+django-admin-honeypot-blag==1.2.0
+django-axes==8.3.1
 django-cloudinary-storage==0.3.0
 django-cors-headers==4.9.0
+django-ipware==7.0.1
 django-ratelimit==4.1.0
 djangorestframework==3.16.1
 dotenv==0.9.9
@@ -55,6 +58,7 @@ pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 python-decouple==3.8
 python-dotenv==1.2.1
+python-ipware==3.0.0
 pytokens==0.4.1
 PyYAML==6.0.3
 referencing==0.37.0

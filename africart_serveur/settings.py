@@ -52,8 +52,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "graphene_django",
     "admin_honeypot",
-    'axes',
-
+    "axes",
     # liste des applications
     "authentification",
     "clients",
@@ -64,7 +63,6 @@ INSTALLED_APPS = [
     "statistiques",
     "service_client",
     "recommandations",
-
     # CDN Cloudinary
     "cloudinary",
     "cloudinary_storage",
@@ -208,17 +206,16 @@ CSRF_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=False, cast=bool)
 # 2. Empêche l'envoi du jeton CSRF via HTTP
 CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=False, cast=bool)
-# 3. Empêche le JavaScript du navigateur d'accéder au cookie de session 
+# 3. Empêche le JavaScript du navigateur d'accéder au cookie de session
 # (Protection contre les attaques XSS)
 SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=bool)
 # 4. Protection contre le "Clickjacking" (empêche l'admin d'être mis dans une iframe)
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
 # 5. Active les protections intégrées du navigateur contre le XSS et le reniflage de contenu
 SECURE_BROWSER_XSS_FILTER = config("SECURE_BROWSER_XSS_FILTER", default=True, cast=bool)
-SECURE_CONTENT_TYPE_NOSNIFF = config("SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool)
-
-
-
+SECURE_CONTENT_TYPE_NOSNIFF = config(
+    "SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool
+)
 
 # Configuration de la documentation avec drf-spectacular
 SPECTACULAR_SETTINGS = {
@@ -243,7 +240,7 @@ CLOUDINARY_STORAGE = {
 
 # Configuration de l'authentification pour permettre la connexion par email ou numéro de téléphone
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesBackend',
+    "axes.backends.AxesBackend",
     "utilisateurs.backend.CustomAuthenticationBackend",  # notre backend custom
     "django.contrib.auth.backends.ModelBackend",  # fallback
 ]
