@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 null=True,
                 upload_to="photo_profil_utilisateur",
                 verbose_name="Photo de profil utilisateur",
+                max_length=500,
             ),
         ),
         migrations.AlterField(
