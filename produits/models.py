@@ -65,6 +65,7 @@ class Produit(models.Model):
         default=image_produit_par_defaut,
         blank=True,
         null=True,
+        max_length=500,
     )
     thumbnail = models.URLField(blank=True, null=True, editable=False)
 
@@ -74,6 +75,7 @@ class Produit(models.Model):
         default=image_produit_par_defaut,
         blank=True,
         null=True,
+        max_length=500,
     )
     thumbnail_2 = models.URLField(blank=True, null=True, editable=False)
 
@@ -83,6 +85,7 @@ class Produit(models.Model):
         default=image_produit_par_defaut,
         blank=True,
         null=True,
+        max_length=500,
     )
     thumbnail_3 = models.URLField(blank=True, null=True, editable=False)
 

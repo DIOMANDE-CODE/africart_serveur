@@ -74,6 +74,7 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
         folder="mes_projets/AfriCart/utilisateurs/photos_profil/",
         blank=True,
         null=True,
+        max_length=500,
     )
     thumbnail = models.URLField(blank=True, null=True, editable=False)
 
