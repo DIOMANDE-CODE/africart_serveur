@@ -20,6 +20,11 @@ env/
 .DS_Store
 Thumbs.db
 
+# Base de données SQLite
+*.sqlite3
+db.sqlite3
+
+data_clean.json
 
 brouillon.txt
 workflow_avant_push.txt
