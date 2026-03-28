@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="commande",
             name="code_livraison",
-            field=models.CharField(default="MARCHEPRO-", editable=False, max_length=6),
+            field=models.CharField(default="MARCHEPRO-", editable=False, max_length=21),
         ),
     ]
