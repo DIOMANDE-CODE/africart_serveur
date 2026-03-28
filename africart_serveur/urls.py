@@ -25,7 +25,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .schema import schema
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("africart-portail/", admin.site.urls),
+    path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
     path("utilisateurs/", include("utilisateurs.urls")),
     path("authentification/", include("authentification.urls")),
     path("clients/", include("clients.urls")),
@@ -37,7 +38,6 @@ urlpatterns = [
     path("recommandations/", include("recommandations.urls")),
     path("", lambda request: HttpResponse("Bienvenue sur AfriCart")),
     path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
-    # urls de drf-spectacular
 ]
 
 if settings.DEBUG:

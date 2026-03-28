@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "graphene_django",
+    "admin_honeypot",
+    'axes',
+
     # liste des applications
     "authentification",
     "clients",
@@ -61,6 +64,7 @@ INSTALLED_APPS = [
     "statistiques",
     "service_client",
     "recommandations",
+
     # CDN Cloudinary
     "cloudinary",
     "cloudinary_storage",
@@ -76,6 +80,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "africart_serveur.urls"
@@ -195,12 +200,24 @@ CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 CORS_ALLOW_CREDENTIALS = True
 
-# Configuration des Cookies
 
-SESSION_COOKIE_SECURE = False
+# Configuration des Cookies
 SESSION_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = "Lax"
+# 1. Empêche l'envoi des cookies de session via une connexion non sécurisée (HTTP)
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=False, cast=bool)
+# 2. Empêche l'envoi du jeton CSRF via HTTP
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=False, cast=bool)
+# 3. Empêche le JavaScript du navigateur d'accéder au cookie de session 
+# (Protection contre les attaques XSS)
+SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=bool)
+# 4. Protection contre le "Clickjacking" (empêche l'admin d'être mis dans une iframe)
+X_FRAME_OPTIONS = 'DENY'
+# 5. Active les protections intégrées du navigateur contre le XSS et le reniflage de contenu
+SECURE_BROWSER_XSS_FILTER = config("SECURE_BROWSER_XSS_FILTER", default=True, cast=bool)
+SECURE_CONTENT_TYPE_NOSNIFF = config("SECURE_CONTENT_TYPE_NOSNIFF", default=True, cast=bool)
+
+
 
 
 # Configuration de la documentation avec drf-spectacular
@@ -226,6 +243,19 @@ CLOUDINARY_STORAGE = {
 
 # Configuration de l'authentification pour permettre la connexion par email ou numéro de téléphone
 AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
     "utilisateurs.backend.CustomAuthenticationBackend",  # notre backend custom
     "django.contrib.auth.backends.ModelBackend",  # fallback
 ]
+
+
+# --- CONFIGURATION DJANGO-AXES (Version Mise à jour) ---
+
+# Nombre de tentatives avant blocage
+AXES_FAILURE_LIMIT = 5
+# Durée du blocage en heures
+AXES_COOLOFF_TIME = 1
+# Ici : On bloque la combinaison de l'IP et du Nom d'utilisateur
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+# Réinitialiser le compteur après une connexion réussie
+AXES_RESET_ON_SUCCESS = True
