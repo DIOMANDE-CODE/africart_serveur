@@ -56,7 +56,7 @@ def login_utilisateur(request):
             )
 
         # Authentification
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request=request, username=email, password=password)
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
             info_user = UtilisateurSerializer(user).data
@@ -76,8 +76,8 @@ def login_utilisateur(request):
                 key="auth_token",
                 value=token.key,
                 httponly=True,
-                secure=False,
-                samesite="Lax",
+                secure=True,
+                samesite="None",
                 path="/",
                 max_age=43200,
             )
