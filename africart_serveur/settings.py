@@ -220,9 +220,9 @@ CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SAMESITE = "None"
 # 1. Empêche l'envoi des cookies de session via une connexion non sécurisée (HTTP)
-SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=False, cast=bool)
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE",cast=bool)
 # 2. Empêche l'envoi du jeton CSRF via HTTP
-CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=False, cast=bool)
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE",cast=bool)
 # 3. Empêche le JavaScript du navigateur d'accéder au cookie de session
 # (Protection contre les attaques XSS)
 SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=bool)

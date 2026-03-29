@@ -1,10 +1,10 @@
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 
 from utilisateurs.models import Utilisateur
@@ -12,6 +12,7 @@ from utilisateurs.serializers import UtilisateurSerializer
 from django.views.decorators.csrf import csrf_exempt
 import traceback
 from rest_framework.permissions import IsAuthenticated
+from utilisateurs.auth import CookieTokenAuthentication
 
 
 # Connexion utilisateur
@@ -58,6 +59,7 @@ def login_utilisateur(request):
         # Authentification
         user = authenticate(request=request, username=email, password=password)
         if user is not None:
+            login(request, user)
             token, _ = Token.objects.get_or_create(user=user)
             info_user = UtilisateurSerializer(user).data
 
@@ -210,28 +212,14 @@ def logout_mobile(request):
 
 
 @api_view(["GET"])
+@authentication_classes([CookieTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def check_session(request):
-    # lire le token dans les cookies
-    token_key = request.COOKIES.get("auth_token")
-
-    if not token_key:
-        return Response({"success": False, "authenticated": False}, status=401)
-
-    try:
-        token = Token.objects.get(key=token_key)
-        user = token.user
-
-        return Response(
-            {
-                "success": True,
-                "authenticated": True,
-                "user": UtilisateurSerializer(user).data,
-            },
-            status=200,
-        )
-
-    except Token.DoesNotExist:
-        return Response({"success": False, "authenticated": False}, status=401)
+    return Response({
+        "success": True,
+        "authenticated": True,
+        "user": UtilisateurSerializer(request.user).data,
+    }, status=200)
 
 
 @api_view(["POST"])
